@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blaze Kitchen — Admin Panel</title>
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<!-- ════════════ LOGIN SCREEN ════════════ -->
+<div id="loginScreen" class="login-screen">
+  <!-- Video Background -->
+  <video class="login-bg-video" autoplay muted loop playsinline>
+    <source src="../frontend/videos/admin login.mp4" type="video/mp4">
+  </video>
+  <div class="login-overlay"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <svg width="38" height="46" viewBox="0 0 40 48" fill="none">
+        <path d="M20 0 C25 8,38 14,36 28 C34 38,28 44,20 48 C12 44,6 38,4 28 C2 14,15 8,20 0Z" fill="#FF5E00"/>
+        <ellipse cx="20" cy="30" rx="4" ry="5" fill="#FFE566" opacity="0.8"/>
+      </svg>
+      <h1>BLAZE <span>KITCHEN</span></h1>
+      <p class="login-sub">Admin Panel</p>
+    </div>
+    <form id="loginForm" autocomplete="off">
+      <div class="login-field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="admin@blazekitchen.com" required />
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" required />
+      </div>
+      <p id="loginError" class="login-error"></p>
+      <button type="submit" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════ ADMIN SHELL ════════════ -->
+<div id="adminShell" class="admin-shell" style="display:none">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <svg width="30" height="36" viewBox="0 0 40 48" fill="none">
+        <path d="M20 0 C25 8,38 14,36 28 C34 38,28 44,20 48 C12 44,6 38,4 28 C2 14,15 8,20 0Z" fill="#FF5E00"/>
+        <ellipse cx="20" cy="30" rx="4" ry="5" fill="#FFE566" opacity="0.8"/>
+      </svg>
+      <div class="sb-brand-text">
+        <h2>BLAZE <span>KITCHEN</span></h2>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <a class="sb-link active" data-section="dashboard">
+        <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+      </a>
+      <a class="sb-link" data-section="users">
+        <i class="fas fa-users"></i><span>Users</span>
+      </a>
+      <a class="sb-link" data-section="menu">
+        <i class="fas fa-utensils"></i><span>Menu</span>
+      </a>
+      <a class="sb-link" data-section="menu-items">
+        <i class="fas fa-hamburger"></i><span>Menu Items</span>
+      </a>
+      <a class="sb-link" data-section="mood">
+        <i class="fas fa-face-smile"></i><span>Mood Management</span>
+      </a>
+      <a class="sb-link" data-section="orders">
+        <i class="fas fa-receipt"></i><span>Orders</span>
+        <span class="sb-pending-badge" id="sbPendingBadge" style="display:none">0</span>
+      </a>
+      <a class="sb-link" data-section="activities">
+        <i class="fas fa-stream"></i><span>Activities</span>
+      </a>
+      <a class="sb-link" data-section="analytics">
+        <i class="fas fa-chart-line"></i><span>Analytics</span>
+      </a>
+      <a class="sb-link" data-section="sales-summary">
+        <i class="fas fa-file-invoice"></i><span>Sales Summary</span>
+      </a>
+      <a class="sb-link" data-section="feedback">
+        <i class="fas fa-comment-dots"></i><span>Feedback</span>
+        <span class="sb-pending-badge" id="sbFeedbackBadge" style="display:none">0</span>
+      </a>
+      <a class="sb-link" data-section="reviews">
+        <i class="fas fa-star-half-alt"></i><span>Reviews</span>
+        <span class="sb-pending-badge" id="sbReviewBadge" style="display:none">0</span>
+      </a>
+      <a class="sb-link" data-section="settings">
+        <i class="fas fa-cog"></i><span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sb-account" id="sbAccount">
+      <div class="sb-avatar" id="sbAvatar">A</div>
+      <div class="sb-account-info">
+        <span class="sb-name" id="sbName">Admin</span>
+        <span class="sb-role">Administrator</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <button class="topbar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="globalSearch" placeholder="Search users, orders, menu…" />
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-clock" id="topbarClock"></div>          <div class="topbar-ks-pill" id="topbarKsPill" onclick="switchSection('dashboard')" title="Kitchen Status — click to manage">
+            <span class="topbar-ks-dot" id="topbarKsDot"></span>
+            <span class="topbar-ks-txt" id="topbarKsTxt">OPEN</span>
+          </div>        <button class="topbar-icon" id="notifBtn" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notif-badge" id="notifBadge">0</span>
+        </button>
+        <button class="topbar-icon" id="themeBtn" title="Toggle theme">
+          <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+        <button class="topbar-icon" id="logoutBtn" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-head">
+        <h4>Notifications</h4>
+        <button id="clearNotifs">Clear All</button>
+      </div>
+      <div class="notif-list" id="notifList">
+        <p class="notif-empty">No new notifications</p>
+      </div>
+    </div>
+
+    <!-- ═══ SECTIONS ═══ -->
+    <div class="sections-wrap">
+
+      <!-- ─── DASHBOARD ─── -->
+      <section class="section active" id="sec-dashboard">
+        <div class="sec-header">
+          <h1><i class="fas fa-chart-pie"></i> Dashboard</h1>
+          <button class="btn-refresh" onclick="loadDashboard()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <!-- ── KITCHEN STATUS CONTROL ── -->
+        <div class="ks-card" id="ksCard">
+          <div class="ks-left">
+            <div class="ks-icon-wrap" id="ksIconWrap">
+              <i class="fas fa-fire" id="ksIcon"></i>
+            </div>
+            <div class="ks-info">
+              <span class="ks-label">Kitchen Status</span>
+              <span class="ks-status-text" id="ksStatusText">Open for Orders</span>
+              <span class="ks-mode-text" id="ksModeText">Auto (time-based)</span>
+            </div>
+          </div>
+          <div class="ks-center">
+            <button class="ks-mode-btn" id="ksModeAuto" onclick="setKitchenMode('auto')" title="Auto — follow opening hours"><i class="fas fa-clock"></i> Auto</button>
+            <button class="ks-mode-btn" id="ksModeOpen" onclick="setKitchenMode('open')" title="Force open regardless of time"><i class="fas fa-door-open"></i> Force Open</button>
+            <button class="ks-mode-btn" id="ksModeClosed" onclick="setKitchenMode('closed')" title="Force close immediately"><i class="fas fa-door-closed"></i> Force Close</button>
+          </div>
+          <div class="ks-right">
+            <div class="ks-toggle-wrap" onclick="toggleKitchen()">
+              <div class="ks-toggle" id="ksToggle">
+                <div class="ks-thumb">
+                  <i class="fas fa-fire" id="ksThumbIcon"></i>
+                </div>
+              </div>
+              <span class="ks-toggle-label" id="ksToggleLabel">OPEN</span>
+            </div>
+          </div>
+        </div>
+        <!-- /KITCHEN STATUS -->
+
+        <div class="stat-cards" id="statCards">
+          <div class="stat-card sc-orange">
+            <div class="sc-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+            <div class="sc-data"><span class="sc-val" id="statRevenue">₹0</span><span class="sc-label">Revenue</span></div>
+          </div>
+          <div class="stat-card sc-blue">
+            <div class="sc-icon"><i class="fas fa-receipt"></i></div>
+            <div class="sc-data"><span class="sc-val" id="statOrders">0</span><span class="sc-label">Total Orders</span></div>
+          </div>
+          <div class="stat-card sc-green">
+            <div class="sc-icon"><i class="fas fa-users"></i></div>
+            <div class="sc-data"><span class="sc-val" id="statUsers">0</span><span class="sc-label">Users</span></div>
+          </div>
+          <div class="stat-card sc-purple">
+            <div class="sc-icon"><i class="fas fa-fire"></i></div>
+            <div class="sc-data"><span class="sc-val" id="statActive">0</span><span class="sc-label">Active Orders</span></div>
+          </div>
+        </div>
+        <div class="dash-charts">
+          <div class="chart-card">
+            <h3>Orders — Last 7 Days</h3>
+            <canvas id="chartDailyOrders"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Revenue — Last 7 Days</h3>
+            <canvas id="chartDailyRevenue"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>New Users — Last 7 Days</h3>
+            <canvas id="chartDailyUsers"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Order Status Breakdown</h3>
+            <canvas id="chartStatusPie"></canvas>
+          </div>
+        </div>
+        <div class="dash-recent">
+          <h3>Recent Orders</h3>
+          <div class="table-wrap">
+            <table class="adm-table">
+              <thead>
+                <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Time</th></tr>
+              </thead>
+              <tbody id="recentOrdersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── USERS ─── -->
+      <section class="section" id="sec-users">
+        <div class="sec-header">
+          <h1><i class="fas fa-users"></i> Users</h1>
+          <div class="sec-actions">
+            <input type="text" class="sec-search" id="userSearch" placeholder="Search users…" />
+            <button class="btn-export" onclick="exportUsersExcel()"><i class="fas fa-file-excel"></i> Export</button>
+            <button class="btn-refresh" onclick="loadUsers()"><i class="fas fa-sync-alt"></i></button>
+          </div>
+        </div>
+        <div class="users-chart-row">
+          <div class="chart-card chart-half">
+            <h3>User Registrations — Last 30 Days</h3>
+            <canvas id="chartUserGrowth"></canvas>
+          </div>
+          <div class="chart-card chart-half">
+            <h3>Users by Role</h3>
+            <canvas id="chartUserRoles"></canvas>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Role</th><th>Orders</th><th>Spent</th><th>Joined</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── MENU ─── -->
+      <section class="section" id="sec-menu">
+        <div class="sec-header">
+          <h1><i class="fas fa-utensils"></i> Menu</h1>
+          <div class="sec-actions">
+            <input type="text" class="sec-search" id="menuSearch" placeholder="Search categories…" oninput="filterMenu()" />
+            <button class="btn-export" onclick="exportMenuExcel()"><i class="fas fa-file-excel"></i> Export</button>
+            <button class="btn-refresh" onclick="loadMenu()"><i class="fas fa-sync-alt"></i></button>
+          </div>
+        </div>
+        <div class="menu-stats" id="menuStats"></div>
+        <div id="menuScheduleBanner"></div>
+        <div id="menuMainCats"></div>
+      </section>
+
+      <!-- ─── MENU ITEMS (CRUD) ─── -->
+      <section class="section" id="sec-menu-items">
+
+        <!-- Hero Header -->
+        <div class="mi-hero">
+          <div class="mi-hero-left">
+            <div class="mi-hero-icon"><i class="fas fa-utensils"></i></div>
+            <div>
+              <h1>Menu Items</h1>
+              <p class="mi-hero-sub">Manage your entire menu — categories, subcategories &amp; items</p>
+            </div>
+          </div>
+          <div class="mi-hero-right">
+            <button class="mi-btn mi-btn-outline" onclick="toggleAllAccordions()" id="btnToggleAll">
+              <i class="fas fa-expand-alt"></i> Expand All
+            </button>
+            <button class="mi-btn mi-btn-success" onclick="openCreateCategoryModal()">
+              <i class="fas fa-folder-plus"></i> New Category
+            </button>
+            <button class="mi-btn mi-btn-primary" onclick="loadMenuItems()">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="mi-stat-cards" id="miStats"></div>
+
+        <!-- Toolbar -->
+        <div class="mi-toolbar">
+          <div class="mi-search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="miSearch" placeholder="Search items by name…" oninput="filterMenuItems()" />
+          </div>
+        </div>
+
+        <!-- Category Accordion -->
+        <div class="mi-accordion" id="miAccordion">
+          <div class="mi-loading">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Loading menu…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── MOOD MANAGEMENT ─── -->
+      <section class="section" id="sec-mood">
+        <div class="sec-header">
+          <h1><i class="fas fa-face-smile"></i> Mood Management</h1>
+          <div class="sec-actions">
+            <input type="text" class="sec-search" id="moodSearch" placeholder="Search mood items..." />
+            <button class="btn-export" onclick="openMoodModalCreate()"><i class="fas fa-plus"></i> Add Mood Item</button>
+            <button class="btn-refresh" onclick="loadMoodManagement()"><i class="fas fa-sync-alt"></i></button>
+          </div>
+        </div>
+
+        <div class="mood-layout">
+          <div class="mood-card">
+            <div class="mood-card-head">
+              <h3><i class="fas fa-sliders"></i> Mood Category Controls</h3>
+              <span class="mood-card-sub">Enable or disable mood categories</span>
+            </div>
+            <div id="moodCategoryGrid" class="mood-category-grid">
+              <div class="mi-loading"><i class="fas fa-spinner fa-spin"></i><p>Loading categories...</p></div>
+            </div>
+          </div>
+
+          <div class="mood-card">
+            <div class="mood-card-head">
+              <h3><i class="fas fa-list-check"></i> Mood Mappings</h3>
+              <span class="mood-card-sub">Mapped items with nutrition, tags and mood fit</span>
+            </div>
+            <div class="table-wrap">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Moods</th>
+                    <th>Preference</th>
+                    <th>Nutrition</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="moodItemsBody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:20px"><i class="fas fa-spinner fa-spin"></i> Loading mood items...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ADD / EDIT MOOD ITEM MODAL ── -->
+      <div class="modal-overlay" id="moodModalOverlay" style="display:none">
+        <div class="modal-card" id="moodModalCard">
+          <div class="modal-head">
+            <h3 id="moodModalTitle"><i class="fas fa-plus-circle"></i> Add Mood Item</h3>
+            <button class="modal-close" onclick="closeMoodModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="moodForm" autocomplete="off">
+            <input type="hidden" id="moodEditId" value="" />
+            <div class="modal-body">
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Pick Existing Menu Item (optional)</label>
+                  <select id="moodSourceSelect">
+                    <option value="">-- Select from Menu --</option>
+                  </select>
+                  <span class="mf-hint" id="moodSourceHint">Choose from your menu to auto-fill item details.</span>
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Item Name</label>
+                  <input type="text" id="moodItemName" required placeholder="e.g. High Protein Chicken Bowl" />
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group">
+                  <label class="mf-req">Price (₹)</label>
+                  <input type="number" id="moodPrice" min="0" step="1" required placeholder="249" />
+                </div>
+                <div class="mf-group">
+                  <label class="mf-req">Food Preference</label>
+                  <select id="moodFoodPreference" required>
+                    <option value="both">Both</option>
+                    <option value="veg">Veg</option>
+                    <option value="non-veg">Non-Veg</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Mood Categories</label>
+                  <div id="moodCheckboxWrap" class="mood-checkbox-wrap"></div>
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group">
+                  <label>Calories</label>
+                  <input type="number" id="moodCalories" min="0" step="1" placeholder="420" />
+                </div>
+                <div class="mf-group">
+                  <label>Protein (g)</label>
+                  <input type="number" id="moodProtein" min="0" step="0.1" placeholder="28" />
+                </div>
+                <div class="mf-group">
+                  <label>Prep Time (mins)</label>
+                  <input type="number" id="moodPrepTime" min="0" step="1" placeholder="18" />
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Tags (comma separated)</label>
+                  <input type="text" id="moodTags" placeholder="healthy, comfort, spicy, quick" />
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Image URL (optional)</label>
+                  <input type="url" id="moodImageUrl" placeholder="https://..." />
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Why this food? (admin note)</label>
+                  <textarea id="moodShortReason" rows="3" placeholder="Explain why this item is suitable for selected moods."></textarea>
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-switch-label">
+                    <input type="checkbox" id="moodItemEnabled" checked />
+                    <span class="mf-switch-text">Show this mood item to users</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <button type="button" class="btn-modal-cancel" onclick="closeMoodModal()">Cancel</button>
+              <button type="submit" class="btn-modal-save" id="btnSaveMoodItem">
+                <i class="fas fa-save"></i> Save Mood Item
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── ADD / EDIT ITEM MODAL ── -->
+      <div class="modal-overlay" id="itemModalOverlay" style="display:none">
+        <div class="modal-card" id="itemModal">
+          <div class="modal-head">
+            <h3 id="itemModalTitle"><i class="fas fa-plus-circle"></i> Add New Item</h3>
+            <button class="modal-close" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="itemForm" autocomplete="off">
+            <div class="modal-body">
+              <div class="mf-ctx" id="mfContext"></div>
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Item Name</label>
+                  <input type="text" id="mfName" placeholder="e.g. Espresso" required />
+                </div>
+              </div>
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Price(s) — comma-separated for sizes</label>
+                  <input type="text" id="mfPrices" placeholder="e.g. 170 or 170, 220, 280" required />
+                  <span class="mf-hint">Use commas for multiple size prices</span>
+                </div>
+              </div>
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Image URL</label>
+                  <input type="url" id="mfImage" placeholder="https://… (leave empty for default)" />
+                </div>
+              </div>
+              <!-- Image preview -->
+              <div class="mf-preview" id="mfPreview" style="display:none">
+                <img id="mfPreviewImg" alt="Preview" />
+              </div>
+            </div>
+            <div class="modal-foot">
+              <button type="button" class="btn-modal-cancel" onclick="closeItemModal()">Cancel</button>
+              <button type="submit" class="btn-modal-save" id="btnSaveItem">
+                <i class="fas fa-save"></i> Save Item
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── ADD / RENAME SUBCATEGORY MODAL ── -->
+      <div class="modal-overlay" id="subModalOverlay" style="display:none">
+        <div class="modal-card modal-sm">
+          <div class="modal-head">
+            <h3 id="subModalTitle"><i class="fas fa-folder-plus"></i> Add Subcategory</h3>
+            <button class="modal-close" onclick="closeSubModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="subForm" autocomplete="off">
+            <div class="modal-body">
+              <div class="mf-ctx" id="mfSubContext"></div>
+              <div class="mf-group mf-full">
+                <label class="mf-req">Subcategory Name</label>
+                <input type="text" id="mfSubName" placeholder="e.g. Iced Coffee" required />
+              </div>
+            </div>
+            <div class="modal-foot">
+              <button type="button" class="btn-modal-cancel" onclick="closeSubModal()">Cancel</button>
+              <button type="submit" class="btn-modal-save" id="btnSaveSub">
+                <i class="fas fa-save"></i> Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── CREATE CATEGORY MODAL ── -->
+      <div class="modal-overlay" id="catModalOverlay" style="display:none">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h3 id="catModalTitle"><i class="fas fa-folder-plus"></i> Create New Category</h3>
+            <button class="modal-close" onclick="closeCategoryModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="catForm" autocomplete="off">
+            <div class="modal-body">
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Category Name</label>
+                  <input type="text" id="mfCatName" placeholder="e.g. Desserts, Sides, Beverages" required />
+                </div>
+              </div>
+              <!-- Meal Slot Selection -->
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-req">Meal Slot</label>
+                  <p class="mf-hint" style="margin-bottom:8px">Select when this category should appear</p>
+                  <div class="mf-slot-grid" id="mfCatSlots">
+                    <label class="mf-slot-chip">
+                      <input type="checkbox" value="All Time" />
+                      <span class="mf-slot-label"><i class="fas fa-clock"></i> All Time</span>
+                    </label>
+                    <label class="mf-slot-chip">
+                      <input type="checkbox" value="Breakfast" />
+                      <span class="mf-slot-label"><i class="fas fa-sun"></i> Breakfast</span>
+                    </label>
+                    <label class="mf-slot-chip">
+                      <input type="checkbox" value="Lunch" />
+                      <span class="mf-slot-label"><i class="fas fa-bowl-food"></i> Lunch</span>
+                    </label>
+                    <label class="mf-slot-chip">
+                      <input type="checkbox" value="Snacks" />
+                      <span class="mf-slot-label"><i class="fas fa-cookie-bite"></i> Snacks</span>
+                    </label>
+                    <label class="mf-slot-chip">
+                      <input type="checkbox" value="Dinner" />
+                      <span class="mf-slot-label"><i class="fas fa-moon"></i> Dinner</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Image URL</label>
+                  <input type="url" id="mfCatImage" placeholder="https://… (leave empty for default)" />
+                </div>
+              </div>
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label>Badge (optional)</label>
+                  <input type="text" id="mfCatBadge" placeholder="e.g. New, Popular, Hot" />
+                </div>
+              </div>
+              <!-- Image preview -->
+              <div class="mf-preview" id="mfCatPreview" style="display:none">
+                <img id="mfCatPreviewImg" alt="Preview" />
+              </div>
+              <div class="mf-row">
+                <div class="mf-group mf-full">
+                  <label class="mf-switch-label">
+                    <input type="checkbox" id="mfCatAvailable" checked />
+                    <span class="mf-switch-text">Available immediately</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-foot">
+              <button type="button" class="btn-modal-cancel" onclick="closeCategoryModal()">Cancel</button>
+              <button type="submit" class="btn-modal-save" id="btnSaveCat">
+                <i class="fas fa-save"></i> Create Category
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── EDIT CATEGORY IMAGE MODAL ── -->
+      <div class="modal-overlay" id="catImageModalOverlay" style="display:none">
+        <div class="modal-card modal-sm">
+          <div class="modal-head">
+            <h3 id="catImageModalTitle"><i class="fas fa-image"></i> Update Category Image</h3>
+            <button class="modal-close" onclick="closeCatImageModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="catImageForm" autocomplete="off">
+            <div class="modal-body">
+              <div class="mf-ctx" id="mfCatImageContext"></div>
+              <div class="mf-group mf-full" style="margin-top:10px">
+                <label>Image URL</label>
+                <input type="url" id="mfEditCatImage" placeholder="https://..." />
+              </div>
+              <div class="mf-group mf-full" style="margin-top:10px">
+                <label>Badge (optional)</label>
+                <input type="text" id="mfEditCatBadge" placeholder="e.g. New, Popular" />
+              </div>
+              <div class="mf-preview" id="mfEditCatPreview" style="display:none;margin-top:10px">
+                <img id="mfEditCatPreviewImg" alt="Category Preview" />
+              </div>
+            </div>
+            <div class="modal-foot">
+              <button type="button" class="btn-modal-cancel" onclick="closeCatImageModal()">Cancel</button>
+              <button type="submit" class="btn-modal-save" id="btnSaveCatImage">
+                <i class="fas fa-save"></i> Save Image
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── DELETE CATEGORY CONFIRM MODAL ── -->
+      <div class="modal-overlay" id="deleteCatModalOverlay" style="display:none">
+        <div class="modal-card modal-sm">
+          <div class="modal-head modal-head-danger">
+            <h3><i class="fas fa-trash-alt"></i> Delete Category</h3>
+            <button class="modal-close" onclick="closeDeleteCatModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="del-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <p class="del-confirm-text">Are you sure you want to delete the entire category<br/><strong id="delCatName"></strong>?</p>
+            <p class="del-warn"><i class="fas fa-info-circle"></i> All subcategories and items will be permanently removed. This cannot be undone.</p>
+          </div>
+          <div class="modal-foot">
+            <button class="btn-modal-cancel" onclick="closeDeleteCatModal()">Cancel</button>
+            <button class="btn-modal-delete" id="btnConfirmDeleteCat" onclick="confirmDeleteCategory()">
+              <i class="fas fa-trash"></i> Delete Category
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DELETE CONFIRM MODAL ── -->
+      <div class="modal-overlay" id="deleteModalOverlay" style="display:none">
+        <div class="modal-card modal-sm">
+          <div class="modal-head modal-head-danger">
+            <h3><i class="fas fa-trash-alt"></i> Confirm Delete</h3>
+            <button class="modal-close" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="del-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <p class="del-confirm-text">Are you sure you want to delete<br/><strong id="delItemName"></strong>?</p>
+            <p class="del-warn"><i class="fas fa-info-circle"></i> This action cannot be undone.</p>
+          </div>
+          <div class="modal-foot">
+            <button class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-modal-delete" id="btnConfirmDelete" onclick="confirmDeleteItem()">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ORDERS ─── -->
+      <section class="section" id="sec-orders">
+        <div class="sec-header">
+          <h1><i class="fas fa-receipt"></i> Orders</h1>
+          <div class="sec-actions">
+            <input type="text" class="sec-search" id="orderSearch" placeholder="Search orders…" />
+            <button class="btn-refresh" onclick="loadOrders()"><i class="fas fa-sync-alt"></i></button>
+          </div>
+        </div>
+
+        <!-- Pending alert banner -->
+        <div class="pending-alert-banner" id="pendingAlertBanner" style="display:none">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="pendingAlertText">New orders waiting for approval!</span>
+          <button onclick="setOrderFilter('placed')">Review Now →</button>
+          <button id="mutePendingSound" class="mute-alert-btn" onclick="stopPendingAlert()" style="display:none" title="Mute alert sound">
+            <i class="fas fa-volume-mute"></i> Mute
+          </button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="order-filter-tabs">
+          <button class="oft-tab active" data-filter="all"      onclick="setOrderFilter('all')">All Orders</button>
+          <button class="oft-tab"        data-filter="placed"   onclick="setOrderFilter('placed')">
+            Pending Approval <span class="oft-count" id="pendingTabCount">0</span>
+          </button>
+          <button class="oft-tab" data-filter="active"    onclick="setOrderFilter('active')">Active</button>
+          <button class="oft-tab" data-filter="completed" onclick="setOrderFilter('completed')">Completed</button>
+          <button class="oft-tab" data-filter="cancelled" onclick="setOrderFilter('cancelled')">Cancelled</button>
+          <button class="oft-tab" data-filter="refund_requests" onclick="setOrderFilter('refund_requests')"
+                  style="color:#3b82f6;border-color:rgba(59,130,246,.3)">
+            💸 Refund Requests
+            <span class="oft-count" id="refundReqTabCount"
+                  style="display:none;background:#3b82f6;color:#fff;margin-left:4px">0</span>
+          </button>
+          <button class="oft-tab" data-filter="cancel_requests" onclick="setOrderFilter('cancel_requests')"
+                  style="color:#f59e0b;border-color:rgba(245,158,11,.3)">
+            ⚠️ Cancel Requests
+            <span class="oft-count" id="cancelReqTabCount"
+                  style="display:none;background:#f59e0b;color:#000;margin-left:4px">0</span>
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Payment</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── ACTIVITIES ─── -->
+      <section class="section" id="sec-activities">
+        <div class="sec-header">
+          <h1><i class="fas fa-stream"></i> Activities</h1>
+          <button class="btn-refresh" onclick="loadActivities()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="activity-feed" id="activityFeed"></div>
+      </section>
+
+      <!-- ─── ANALYTICS ─── -->
+      <section class="section" id="sec-analytics">
+        <div class="sec-header">
+          <h1><i class="fas fa-chart-line"></i> Analytics</h1>
+          <button class="btn-refresh" onclick="loa
+          dAnalytics()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="analytics-kpi" id="analyticsKpi"></div>
+        <div class="dash-charts">
+          <div class="chart-card">
+            <h3>Revenue Trend — 30 Days</h3>
+            <canvas id="chartRevenueTrend"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Orders by Hour</h3>
+            <canvas id="chartByHour"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Top Selling Items</h3>
+            <canvas id="chartTopItems"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Payment Methods</h3>
+            <canvas id="chartPayments"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── SALES SUMMARY ─── -->
+      <section class="section" id="sec-sales-summary">
+        <div class="sec-header">
+          <h1><i class="fas fa-file-invoice"></i> Daily Sales Summary</h1>
+          <button class="btn-refresh" onclick="renderSalesSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div class="sales-report">
+          <div class="sales-report-hero">
+            <div class="sr-hero-left">
+              <div class="sr-logo">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div>
+                <h2>Blaze Kitchen</h2>
+                <p>Daily Sales Summary</p>
+              </div>
+            </div>
+            <div class="sr-hero-right">
+              <div class="sr-meta sr-date-control">
+                <label class="sr-label" for="salesDateInput">Select Date</label>
+                <input type="date" id="salesDateInput" />
+              </div>
+              <div class="sr-meta">
+                <span class="sr-label">Business Date</span>
+                <span class="sr-value" id="salesBusinessDate">—</span>
+              </div>
+              <div class="sr-meta">
+                <span class="sr-label">Generated</span>
+                <span class="sr-value" id="salesGeneratedAt">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sr-grid">
+            <div class="sr-card">
+              <h3>Sales Overview</h3>
+              <div class="sr-kv">
+                <div><span>Gross Sales</span><strong id="srGrossSales">₹0.00</strong></div>
+                <div><span>Sales Return</span><strong id="srSalesReturn">₹0.00</strong></div>
+                <div><span>Discounts</span><strong id="srDiscounts">₹0.00</strong></div>
+                <div><span>Direct Charges</span><strong id="srDirectCharges">₹0.00</strong></div>
+                <div><span>Net Sales</span><strong id="srNetSales">₹0.00</strong></div>
+                <div><span>Sales With Tax</span><strong id="srSalesWithTax">₹0.00</strong></div>
+                <div><span>Sales Without Tax</span><strong id="srSalesWithoutTax">₹0.00</strong></div>
+                <div><span>Other Charges</span><strong id="srOtherCharges">₹0.00</strong></div>
+                <div><span>Taxes</span><strong id="srTaxes">₹0.00</strong></div>
+                <div><span>Rounding</span><strong id="srRounding">₹0.00</strong></div>
+                <div><span>Total Revenue</span><strong class="sr-accent" id="srTotalRevenue">₹0.00</strong></div>
+                <div><span>Payments</span><strong id="srPayments">₹0.00</strong></div>
+                <div><span>Balance Due</span><strong class="sr-warn" id="srBalanceDue">₹0.00</strong></div>
+              </div>
+            </div>
+
+            <div class="sr-card">
+              <h3>Payment Summary</h3>
+              <div class="sr-kv">
+                <div><span>Cash</span><strong id="srPayCash">₹0.00</strong></div>
+                <div><span>PhonePe</span><strong id="srPayPhonePe">₹0.00</strong></div>
+                <div><span>Card</span><strong id="srPayCard">₹0.00</strong></div>
+                <div><span>Wallet Pay</span><strong id="srPayWallet">₹0.00</strong></div>
+                <div><span>Payment Total</span><strong class="sr-accent" id="srPayTotal">₹0.00</strong></div>
+              </div>
+            </div>
+
+            <div class="sr-card">
+              <h3>Sales Metrics</h3>
+              <div class="sr-kv">
+                <div><span>Number of Orders</span><strong id="srOrderCount">0</strong></div>
+                <div><span>Average Order Value</span><strong id="srAvgOrderValue">₹0.00</strong></div>
+                <div><span>Number of Customers</span><strong id="srCustomerCount">0</strong></div>
+                <div><span>Average Sale per Customer</span><strong id="srAvgSalePerCustomer">₹0.00</strong></div>
+                <div><span>Open Orders</span><strong id="srOpenOrders">0</strong></div>
+                <div><span>Open Order Total Amount</span><strong id="srOpenTotal">₹0.00</strong></div>
+                <div><span>Open Order Paid Amount</span><strong id="srOpenPaid">₹0.00</strong></div>
+                <div><span>Open Order Balance Amount</span><strong id="srOpenBalance">₹0.00</strong></div>
+              </div>
+            </div>
+
+            <div class="sr-card">
+              <h3>Brand Summary</h3>
+              <div class="sr-pill">Blaze Kitchen</div>
+            </div>
+          </div>
+
+          <div class="sr-card sr-table-card">
+            <div class="sr-table-head">
+              <h3>Product Summary</h3>
+              <span class="sr-hint">Item-wise totals for the selected business date</span>
+            </div>
+            <div class="table-wrap">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Quantity Sold</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="salesItemsBody"></tbody>
+                <tfoot>
+                  <tr>
+                    <th>Total</th>
+                    <th id="srItemsTotalQty">0</th>
+                    <th>—</th>
+                    <th id="srItemsTotalAmount">₹0.00</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div class="sr-grid sr-grid-3">
+            <div class="sr-card">
+              <h3>Tax Summary</h3>
+              <div class="sr-kv">
+                <div><span>Sales With Tax</span><strong id="srTaxSalesWith">₹0.00</strong></div>
+                <div><span>Sales Without Tax</span><strong id="srTaxSalesWithout">₹0.00</strong></div>
+                <div><span>CGST</span><strong id="srCgst">₹0.00</strong></div>
+                <div><span>SGST</span><strong id="srSgst">₹0.00</strong></div>
+                <div><span>Tax Total</span><strong class="sr-accent" id="srTaxTotal">₹0.00</strong></div>
+              </div>
+            </div>
+
+            <div class="sr-card">
+              <h3>Charge Summary</h3>
+              <div class="sr-kv">
+                <div><span>Packaging Charges</span><strong id="srPackagingCharges">₹0.00</strong></div>
+                <div><span>Delivery Charges</span><strong id="srDeliveryCharges">₹0.00</strong></div>
+                <div><span>Convenience Charges</span><strong id="srConvenienceCharges">₹0.00</strong></div>
+                <div><span>Service Charges</span><strong id="srServiceCharges">₹0.00</strong></div>
+                <div><span>Charge Total</span><strong class="sr-accent" id="srChargeTotal">₹0.00</strong></div>
+              </div>
+            </div>
+
+            <div class="sr-card sr-grand">
+              <h3>Grand Totals</h3>
+              <div class="sr-kv">
+                <div><span>Total Orders</span><strong id="srTotalOrders">0</strong></div>
+                <div><span>Total Items Sold</span><strong id="srTotalItems">0</strong></div>
+                <div><span>Total Revenue</span><strong id="srGrandRevenue">₹0.00</strong></div>
+                <div><span>Total Tax Collected</span><strong id="srGrandTax">₹0.00</strong></div>
+                <div><span>Total Charges Collected</span><strong id="srGrandCharges">₹0.00</strong></div>
+                <div><span>Net Collection</span><strong class="sr-accent" id="srNetCollection">₹0.00</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── SETTINGS ─── -->
+      <section class="section" id="sec-settings">
+        <div class="sec-header">
+          <h1><i class="fas fa-cog"></i> Settings</h1>
+        </div>
+        <div class="settings-grid">
+
+          <!-- Appearance -->
+          <div class="set-card">
+            <h3><i class="fas fa-palette"></i> Appearance</h3>
+            <div class="set-row">
+              <span>Theme</span>
+              <div class="set-toggle-wrap">
+                <button class="set-opt active" data-theme-opt="dark"><i class="fas fa-moon"></i> Dark</button>
+                <button class="set-opt" data-theme-opt="light"><i class="fas fa-sun"></i> Light</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Format -->
+          <div class="set-card">
+            <h3><i class="fas fa-clock"></i> Time Format</h3>
+            <div class="set-row">
+              <span>Display Format</span>
+              <div class="set-toggle-wrap">
+                <button class="set-opt" data-time-opt="utc">UTC</button>
+                <button class="set-opt active" data-time-opt="12">12 Hrs</button>
+                <button class="set-opt" data-time-opt="24">24 Hrs</button>
+              </div>
+            </div>
+            <p class="set-preview" id="timePreview"></p>
+          </div>
+
+          <!-- Change Password -->
+          <div class="set-card set-card-wide">
+            <h3><i class="fas fa-lock"></i> Change Password</h3>
+            <div class="set-lock-overlay" id="passLockOverlay">
+              <div class="set-lock-inner">
+                <i class="fas fa-lock set-lock-icon"></i>
+                <p>Verify you're not a robot to unlock</p>
+                <div class="captcha-box" id="captchaBox">
+                  <label class="captcha-label">
+                    <input type="checkbox" id="captchaCheck" />
+                    <span class="captcha-checkmark"></span>
+                    I'm not a robot
+                  </label>
+                  <div class="captcha-challenge" id="captchaChallenge" style="display:none">
+                    <p id="captchaQuestion"></p>
+                    <input type="text" id="captchaAnswer" placeholder="Your answer" />
+                    <button class="btn-sm" id="captchaSubmit">Verify</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <form id="changePassForm" class="set-pass-form" style="display:none">
+              <div class="login-field">
+                <label>Current Password</label>
+                <input type="password" id="curPass" required />
+              </div>
+              <div class="login-field">
+                <label>New Password</label>
+                <input type="password" id="newPass" minlength="6" required />
+              </div>
+              <div class="login-field">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPass" required />
+              </div>
+              <p class="login-error" id="passError"></p>
+              <button type="submit" class="login-btn"><i class="fas fa-save"></i> Update Password</button>
+            </form>
+          </div>
+
+          <!-- Export -->
+          <div class="set-card">
+            <h3><i class="fas fa-download"></i> Data Export</h3>
+            <div class="set-row">
+              <button class="btn-export" onclick="exportUsersExcel()"><i class="fas fa-file-excel"></i> Export Users</button>
+              <button class="btn-export" onclick="exportMenuExcel()"><i class="fas fa-file-excel"></i> Export Menu</button>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="set-card">
+            <h3><i class="fas fa-bell"></i> Notifications</h3>
+            <div class="set-row">
+              <span>Real-time alerts</span>
+              <label class="switch">
+                <input type="checkbox" id="notifToggle" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="set-row">
+              <span>Sound</span>
+              <label class="switch">
+                <input type="checkbox" id="soundToggle" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Site Contact Info -->
+          <div class="set-card set-card-wide">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="margin:0"><i class="fas fa-address-card"></i> Site Contact Info</h3>
+              <button class="btn-refresh" onclick="loadSiteSettings()" style="padding:6px 14px;font-size:.8rem">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+            <form id="siteSettingsForm" autocomplete="off">
+              <div class="site-settings-grid">
+                <!-- Phone -->
+                <div class="ss-field">
+                  <label><i class="fas fa-phone"></i> Phone Number</label>
+                  <input type="text" id="ssPhone" placeholder="+91 9876543210" />
+                </div>
+                <!-- Address -->
+                <div class="ss-field">
+                  <label><i class="fas fa-location-dot"></i> Address</label>
+                  <input type="text" id="ssAddress" placeholder="Your restaurant address" />
+                </div>
+                <!-- Main Hours -->
+                <div class="ss-field">
+                  <label><i class="fas fa-clock"></i> Main Hours</label>
+                  <input type="text" id="ssMainHours" placeholder="Mon–Sun: 11AM – 11PM" />
+                </div>
+                <!-- Late Night -->
+                <div class="ss-field">
+                  <label><i class="fas fa-moon"></i> Late Night Hours</label>
+                  <input type="text" id="ssLateNight" placeholder="Late Night: Till 2AM" />
+                </div>
+
+                <div class="ss-field">
+                  <label><i class="fas fa-stopwatch"></i> Delivery Min Time (minutes)</label>
+                  <input type="number" id="ssDeliveryMin" min="2" max="3" step="0.1" placeholder="2.0" />
+                </div>
+
+                <div class="ss-field">
+                  <label><i class="fas fa-hourglass-end"></i> Delivery Max Time (minutes)</label>
+                  <input type="number" id="ssDeliveryMax" min="2" max="3" step="0.1" placeholder="3.0" />
+                </div>
+
+                <div class="ss-field">
+                  <label><i class="fas fa-layer-group"></i> Quantity Weight (0-1)</label>
+                  <input type="number" id="ssQtyWeight" min="0" max="1" step="0.05" placeholder="0.70" />
+                </div>
+
+                <div class="ss-field">
+                  <label><i class="fas fa-shapes"></i> Variety Weight (0-1)</label>
+                  <input type="number" id="ssVarietyWeight" min="0" max="1" step="0.05" placeholder="0.30" />
+                </div>
+              </div>
+
+              <!-- Emails -->
+              <div class="ss-emails-section">
+                <label><i class="fas fa-envelope"></i> Email Addresses</label>
+                <div class="ss-emails-list" id="ssEmailsList">
+                  <!-- Dynamic email rows inserted here -->
+                </div>
+                <button type="button" class="btn-ss-add-email" onclick="addEmailRow()">
+                  <i class="fas fa-plus"></i> Add Email
+                </button>
+              </div>
+
+              <div class="ss-actions">
+                <button type="submit" class="btn-ss-save">
+                  <i class="fas fa-save"></i> Save Contact Info
+                </button>
+                <span class="ss-saved-msg" id="ssSavedMsg" style="display:none">
+                  <i class="fas fa-check-circle"></i> Saved!
+                </span>
+              </div>
+            </form>
+          </div>
+
+          <!-- Admin Login History -->
+          <div class="set-card set-card-wide">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="margin:0"><i class="fas fa-history"></i> Admin Login History</h3>
+              <button class="btn-refresh" onclick="loadLoginLogs()" style="padding:6px 14px;font-size:.8rem">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+            <div class="table-wrap">
+              <table class="adm-table" id="loginLogsTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Admin</th>
+                    <th>Email</th>
+                    <th>IP Address</th>
+                    <th>Browser / Device</th>
+                    <th>Status</th>
+                    <th>Date &amp; Time</th>
+                  </tr>
+                </thead>
+                <tbody id="loginLogsBody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:20px">
+                    <i class="fas fa-spinner fa-spin"></i> Loading login history…
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ════════ MANAGE ADMINS ════════ -->
+          <div class="set-card set-card-wide">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="margin:0"><i class="fas fa-users-cog"></i> Manage Admins</h3>
+              <div style="display:flex;gap:8px">
+                <button class="btn-refresh" onclick="loadAdminList()" style="padding:6px 14px;font-size:.8rem">
+                  <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="btn-refresh" onclick="openCreateAdminModal()" style="padding:6px 14px;font-size:.8rem;background:var(--orange);color:#fff;border-color:var(--orange)">
+                  <i class="fas fa-plus"></i> New Admin
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="adm-table" id="adminListTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Last Login</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminListBody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:20px">
+                    <i class="fas fa-spinner fa-spin"></i> Loading admins…
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ════════ CREATE / EDIT ADMIN MODAL ════════ -->
+          <div class="modal-overlay" id="adminModalOverlay" style="display:none"></div>
+          <div class="admin-crud-modal" id="adminFormModal" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+              <h3 id="adminModalTitle" style="margin:0;color:var(--text-primary);font-size:1.05rem">
+                <i class="fas fa-user-plus" style="color:var(--orange);margin-right:8px"></i>New Admin
+              </h3>
+              <button type="button" onclick="closeAdminModal()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1.1rem;padding:4px">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <form id="adminCrudForm" onsubmit="submitAdminForm(event)">
+              <input type="hidden" id="adminEditId" value="">
+              <div class="login-field" style="margin-bottom:14px">
+                <label>Full Name *</label>
+                <input type="text" id="adminFormName" required placeholder="Enter full name" />
+              </div>
+              <div class="login-field" style="margin-bottom:14px">
+                <label>Email Address *</label>
+                <input type="email" id="adminFormEmail" required placeholder="admin@blazekitchen.com" />
+              </div>
+              <div class="login-field" style="margin-bottom:14px">
+                <label>Password <span id="adminPwdHint" style="color:var(--text-dim);font-weight:400">*</span></label>
+                <div style="position:relative">
+                  <input type="password" id="adminFormPassword" placeholder="Min 6 characters" />
+                  <button type="button" onclick="toggleAdminPwdVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer">
+                    <i class="fas fa-eye" id="adminPwdEye"></i>
+                  </button>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <button type="button" onclick="closeAdminModal()" class="btn-export" style="flex:1">Cancel</button>
+                <button type="submit" id="adminFormSubmitBtn" class="login-btn" style="flex:1;margin:0">
+                  <i class="fas fa-check"></i> <span>Create Admin</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── FEEDBACK ─── -->
+      <section class="section" id="sec-feedback">
+        <div class="sec-header">
+          <h1><i class="fas fa-comment-dots"></i> Feedback &amp; Messages</h1>
+          <div class="sec-actions">
+            <select class="sec-search" id="feedbackStatusFilter" style="width:160px" onchange="filterFeedbacks()">
+              <option value="all">All Messages</option>
+              <option value="unread">Unread</option>
+              <option value="read">Read</option>
+              <option value="replied">Replied</option>
+            </select>
+            <button class="btn-refresh" onclick="loadFeedbacks()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div id="feedbackList" class="feedback-list">
+          <div style="text-align:center;color:var(--text-dim);padding:40px">
+            <i class="fas fa-spinner fa-spin fa-2x"></i><p>Loading messages…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── REVIEWS ─── -->
+      <section class="section" id="sec-reviews">
+        <div class="sec-header">
+          <h1><i class="fas fa-star-half-alt"></i> Item Reviews</h1>
+          <div class="sec-actions">
+            <input type="text" class="sec-search" id="reviewSearch" placeholder="Search item, order, user..." oninput="filterReviews()" />
+            <select class="sec-search" id="reviewRatingFilter" style="width:160px" onchange="filterReviews()">
+              <option value="all">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+              <option value="1">1 Star</option>
+            </select>
+            <select class="sec-search" id="reviewPhotoFilter" style="width:170px" onchange="filterReviews()">
+              <option value="all">All Reviews</option>
+              <option value="with-photos">With Photos</option>
+              <option value="without-photos">Without Photos</option>
+            </select>
+            <button class="btn-refresh" onclick="loadReviews()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+
+        <div class="review-summary" id="reviewSummary"></div>
+
+        <div class="review-refund-wrap">
+          <h3 class="review-subtitle"><i class="fas fa-rotate-left"></i> Refund Requests</h3>
+          <div id="refundRequestList" class="review-list review-refund-list">
+            <div style="text-align:center;color:var(--text-dim);padding:24px">
+              <i class="fas fa-spinner fa-spin"></i><p>Loading refund requests...</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="reviewList" class="review-list">
+          <div style="text-align:center;color:var(--text-dim);padding:40px">
+            <i class="fas fa-spinner fa-spin fa-2x"></i><p>Loading reviews...</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast-box" id="toastBox"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>

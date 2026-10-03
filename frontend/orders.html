@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Orders — Blaze Kitchen</title>
+  <link rel="stylesheet" href="css/orders.css?v=4" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="ord-nav">
+  <a href="index.html" class="ord-nav-logo">
+    <svg viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="oflame" x1="20" y1="48" x2="20" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#FF2200"/>
+          <stop offset="45%" stop-color="#FF5E00"/>
+          <stop offset="100%" stop-color="#FFD000"/>
+        </linearGradient>
+      </defs>
+      <path d="M20 2 C20 2 30 12 30 22 C30 34 24 40 20 44 C16 40 10 34 10 22 C10 12 20 2 20 2Z" fill="url(#oflame)"/>
+      <ellipse cx="20" cy="30" rx="4" ry="5" fill="#FFE566" opacity="0.7"/>
+    </svg>
+    BLAZE<span>KITCHEN</span>
+  </a>
+
+  <h2 class="ord-nav-title"><i class="fas fa-receipt"></i> My Orders</h2>
+
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="ord-theme-btn" id="themeToggle" title="Toggle theme">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+    <a href="index.html" class="ord-nav-back">
+      <i class="fas fa-home"></i> Home
+    </a>
+  </div>
+</nav>
+
+<!-- ── TAB BAR ── -->
+<div class="ord-tabs">
+  <button class="ord-tab active" data-tab="active">
+    <i class="fas fa-fire"></i> Active Orders
+    <span class="ord-tab-badge" id="activeBadge">0</span>
+  </button>
+  <button class="ord-tab" data-tab="delivered">
+    <i class="fas fa-check-circle"></i> Delivered
+    <span class="ord-tab-badge" id="deliveredBadge">0</span>
+  </button>
+  <button class="ord-tab" data-tab="all">
+    <i class="fas fa-list"></i> All Orders
+    <span class="ord-tab-badge" id="allBadge">0</span>
+  </button>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="ord-main" id="ordMain">
+  <!-- Loader -->
+  <div class="ord-loader" id="ordLoader">
+    <div class="ord-loader-spinner"></div>
+    <p>Loading your orders…</p>
+  </div>
+
+  <!-- Empty state -->
+  <div class="ord-empty" id="ordEmpty" style="display:none">
+    <div class="ord-empty-icon">📦</div>
+    <h2>No orders yet</h2>
+    <p>Your order history will appear here</p>
+    <a href="index.html" class="ord-btn-browse">
+      <i class="fas fa-utensils"></i> Browse Menu
+    </a>
+  </div>
+
+  <!-- Login required -->
+  <div class="ord-empty" id="ordLoginRequired" style="display:none">
+    <div class="ord-empty-icon">🔒</div>
+    <h2>Login Required</h2>
+    <p>Please log in to view your orders</p>
+    <a href="login.html" class="ord-btn-browse">
+      <i class="fas fa-sign-in-alt"></i> Log In
+    </a>
+  </div>
+
+  <!-- Orders list -->
+  <div class="ord-list" id="ordList" style="display:none"></div>
+</main>
+
+<!-- ── ORDER DETAIL MODAL ── -->
+<div class="ord-modal-overlay" id="ordModal">
+  <div class="ord-modal">
+    <button class="ord-modal-close" id="ordModalClose">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="ord-modal-content" id="ordModalContent">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── CANCEL REASON MODAL ── -->
+<div class="ord-modal-overlay" id="cancelReasonModal" style="display:none;z-index:2000">
+  <div class="ord-modal" style="max-width:440px">
+    <div class="ord-modal-content" style="padding:28px 24px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:2.4rem;margin-bottom:8px">⏱️</div>
+        <h3 style="font-size:1.1rem;font-weight:700;margin:0">Request Order Cancellation</h3>
+        <p style="font-size:0.82rem;color:var(--text-muted,#888);margin-top:6px">
+          The 1-minute instant-cancel window has passed.<br>
+          Tell us why you'd like to cancel — our team will review it.
+        </p>
+      </div>
+      <textarea id="cancelReasonText"
+        placeholder="e.g. Changed my mind, ordered by mistake, duplicate order…"
+        rows="4"
+        style="width:100%;border-radius:10px;padding:12px;font-size:0.9rem;resize:vertical;
+               background:var(--card-bg,#1e1e1e);color:var(--text,#fff);
+               border:1.5px solid var(--border,#333);box-sizing:border-box;outline:none">
+      </textarea>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="ord-btn" onclick="closeCancelReasonModal()" style="flex:1">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="ord-btn danger" id="submitCancelRequestBtn" onclick="submitCancelRequest()" style="flex:2">
+          <i class="fas fa-paper-plane"></i> Submit Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIVE TRACKING MODAL ── -->
+<div class="ord-modal-overlay" id="trackingModal" style="display:none;z-index:2100">
+  <div class="ord-modal" style="max-width:560px">
+    <div class="ord-modal-content" style="padding:26px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:1.05rem">Live Tracking</h3>
+        <button class="ord-btn" onclick="closeTrackingModal()"><i class="fas fa-times"></i> Close</button>
+      </div>
+      <div id="trackingContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ITEM REVIEW MODAL ── -->
+<div class="ord-modal-overlay" id="reviewModal" style="display:none;z-index:2200">
+  <div class="ord-modal" style="max-width:560px">
+    <div class="ord-modal-content" style="padding:26px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:1.05rem">Rate Item</h3>
+        <button class="ord-btn" onclick="closeReviewModal()"><i class="fas fa-times"></i> Close</button>
+      </div>
+      <input type="hidden" id="reviewOrderId" />
+      <input type="hidden" id="reviewItemIdx" />
+      <div id="reviewItemLabel" style="font-size:0.84rem;color:var(--text-dim);margin-bottom:10px"></div>
+      <div class="om-section" style="margin-bottom:12px">
+        <div class="om-section-title">Rating (1-5)</div>
+        <input id="reviewRating" type="number" min="1" max="5" step="1" value="5"
+               style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)" />
+      </div>
+      <div class="om-section" style="margin-bottom:12px">
+        <div class="om-section-title">Comment</div>
+        <textarea id="reviewComment" rows="3"
+          style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)"></textarea>
+      </div>
+      <div class="om-section" style="margin-bottom:16px">
+        <div class="om-section-title">Photo URLs (comma separated)</div>
+        <input id="reviewPhotos" type="text" placeholder="https://... , https://..."
+               style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)" />
+        <div class="review-paste-hint">Or paste image directly: press <strong>Ctrl+V</strong> in the box below</div>
+        <div id="reviewPasteZone" class="review-paste-zone" tabindex="0">
+          <i class="fas fa-clipboard"></i>
+          <span>Click here and paste image</span>
+        </div>
+        <div id="reviewPastedPreview" class="review-pasted-preview"></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="ord-btn" style="flex:1 1 220px" onclick="openRefundFromReviewModal()">
+          <i class="fas fa-rotate-left"></i> Issue? Request Refund
+        </button>
+        <button class="ord-btn primary" style="flex:1 1 220px" onclick="submitItemReview()">
+          <i class="fas fa-star"></i> Submit Review
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REFUND REQUEST MODAL ── -->
+<div class="ord-modal-overlay" id="refundModal" style="display:none;z-index:2250">
+  <div class="ord-modal" style="max-width:560px">
+    <div class="ord-modal-content" style="padding:26px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:1.05rem">Request Refund</h3>
+        <button class="ord-btn" onclick="closeRefundModal()"><i class="fas fa-times"></i> Close</button>
+      </div>
+      <input type="hidden" id="refundOrderId" />
+      <div id="refundOrderLabel" style="font-size:0.84rem;color:var(--text-dim);margin-bottom:10px"></div>
+      <div class="om-section" style="margin-bottom:12px">
+        <div class="om-section-title">Reason</div>
+        <textarea id="refundReason" rows="3" placeholder="Tell us what issue you faced..."
+          style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)"></textarea>
+      </div>
+      <div class="om-section" style="margin-bottom:12px">
+        <div class="om-section-title">Amount (optional)</div>
+        <input id="refundAmount" type="number" min="1" step="1" placeholder="Leave empty for full refund"
+               style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)" />
+      </div>
+      <div class="om-section" style="margin-bottom:16px">
+        <div class="om-section-title">Proof Image URLs (optional, comma separated)</div>
+        <input id="refundProofUrls" type="text" placeholder="https://... , https://..."
+               style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)" />
+        <div class="review-paste-hint">Or paste issue proof image directly: press <strong>Ctrl+V</strong> in the box below</div>
+        <div id="refundPasteZone" class="review-paste-zone" tabindex="0">
+          <i class="fas fa-image"></i>
+          <span>Click here and paste proof image</span>
+        </div>
+        <div id="refundPastedPreview" class="review-pasted-preview"></div>
+      </div>
+      <button class="ord-btn danger" style="width:100%" onclick="submitRefundRequest()">
+        <i class="fas fa-paper-plane"></i> Submit Refund Request
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ── -->
+<div class="ord-toast-container" id="ordToastContainer"></div>
+
+<script src="js/scroll-anim.js"></script>
+<script src="js/orders.js?v=9"></script>
+</body>
+</html>

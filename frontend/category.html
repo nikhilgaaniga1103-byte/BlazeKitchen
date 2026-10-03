@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category - Blaze Kitchen</title>
+  <meta name="description" content="Browse restaurants and food in your favorite category">
+  <meta name="theme-color" content="#FF5E00">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* Category Page Specific Styles */
+    .category-page-container {
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, rgba(255, 94, 0, 0.1) 0%, rgba(255, 94, 0, 0.05) 100%);
+      padding: 40px 0;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 32px;
+    }
+
+    .category-header .container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .category-header-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .category-header-image {
+      width: 140px;
+      height: 140px;
+      border-radius: 16px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(255, 94, 0, 0.2);
+    }
+
+    .category-header-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .category-header-info h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .category-header-info p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .category-header-stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .category-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .category-stat-icon {
+      color: var(--orange);
+      font-size: 1.1rem;
+    }
+
+    .category-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .category-controls button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: var(--bg-4);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      cursor: none;
+    }
+
+    .category-controls button:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: rgba(255, 94, 0, 0.06);
+    }
+
+    .category-controls select {
+      padding: 10px 14px;
+      background: var(--bg-4);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: all var(--transition);
+      cursor: none;
+    }
+
+    .category-controls select:hover {
+      border-color: var(--orange);
+    }
+
+    /* Restaurant Grid */
+    .category-section {
+      padding: 0 0 60px;
+    }
+
+    .category-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .restaurant-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 1200px) {
+      .restaurant-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .restaurant-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .restaurant-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .restaurant-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all var(--transition);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .restaurant-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(255, 94, 0, 0.2);
+    }
+
+    .restaurant-card-image-wrap {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      background: var(--bg-3);
+    }
+
+    .restaurant-card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .restaurant-card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--cream);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(4px);
+    }
+
+    .restaurant-card-body {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .restaurant-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+      letter-spacing: 0.01em;
+      line-height: 1.4;
+    }
+
+    .restaurant-card-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .restaurant-card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .restaurant-card-meta-item.rating {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .restaurant-card-cuisines {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .restaurant-card-location {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .no-results-category {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .no-results-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .no-results-text {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .no-results-hint {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1;
+      padding: 8px 14px;
+      margin-bottom: 20px;
+      background: var(--bg-4);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      cursor: none;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: rgba(255, 94, 0, 0.06);
+    }
+
+    @media (max-width: 768px) {
+      .category-header {
+        padding: 24px 0;
+        margin-bottom: 24px;
+      }
+
+      .category-header-image {
+        width: 100px;
+        height: 100px;
+      }
+
+      .category-header-info h1 {
+        font-size: 1.8rem;
+      }
+
+      .restaurant-grid {
+        gap: 16px;
+      }
+    }
+
+    /* ── Subcategory tabs ── */
+    .subcat-tab {
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1.5px solid var(--card-border);
+      background: var(--bg-4);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .subcat-tab.active, .subcat-tab:hover {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+    }
+
+    /* ── Subcategory section ── */
+    .subcat-section {
+      margin-bottom: 40px;
+    }
+    .subcat-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--orange);
+    }
+    .subcat-header-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .subcat-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      flex: 1;
+    }
+    .subcat-count {
+      font-size: 0.78rem;
+      color: var(--orange);
+      font-weight: 600;
+      background: rgba(255,94,0,0.1);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* ── Items grid ── */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .items-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+
+    /* ── Item card ── */
+    .item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .item-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(255,94,0,0.15);
+      border-color: var(--orange);
+    }
+    .item-card-img-wrap {
+      width: 100%;
+      height: 140px;
+      overflow: hidden;
+      background: var(--bg-3);
+    }
+    .item-card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .item-card:hover .item-card-img-wrap img {
+      transform: scale(1.06);
+    }
+    .item-card-body {
+      padding: 12px;
+    }
+    .item-card-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .item-card-note {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .item-card-note-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .item-card-note-wrap .item-card-note {
+      display: none;
+      margin-bottom: 0;
+    }
+    .item-card-note-wrap.expanded .item-card-note {
+      display: block;
+      -webkit-line-clamp: unset;
+      line-clamp: unset;
+      overflow: visible;
+      margin-bottom: 6px;
+    }
+    .item-note-trigger {
+      cursor: pointer;
+    }
+    .item-note-trigger::after {
+      content: '▾';
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 0.75rem;
+      color: var(--orange);
+      transform: rotate(0deg);
+      transition: transform 0.2s ease;
+    }
+    .item-note-trigger.expanded::after {
+      transform: rotate(180deg);
+    }
+    .item-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .item-card-price {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--orange);
+    }
+    .btn-item-add {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--orange);
+      border: none;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-item-add:hover {
+      background: var(--orange-dark, #e04d00);
+      transform: scale(1.08);
+    }
+  
+  </style>
+</head>
+<body>
+
+<!-- ── CURSOR ── -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="logo">
+      <span class="logo-fire">🔥</span>
+      <span class="logo-text">BLAZE</span>
+      <span class="logo-sub">KITCHEN</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#menu" class="nav-link">Menu</a></li>
+      <li><a href="index.html#About" class="nav-link">About</a></li>
+      <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-btn cart-btn" id="cartBtn">
+        <i class="fas fa-bag-shopping"></i>
+        <span>Cart</span>
+        <span class="cart-badge" id="cartCount">0</span>
+      </button>
+      <button class="nav-btn login-btn" id="loginBtn">
+        <i class="fas fa-user-circle"></i>
+        <span id="loginBtnText">Login</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html#menu" class="mobile-nav-link" onclick="closeMobileMenu()">Menu</a>
+  <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+  <a href="index.html#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- ── CATEGORY PAGE ── -->
+<div class="category-page-container">
+  <div class="container">
+    <button class="back-button" onclick="window.location.href='index.html#menu'">
+      <i class="fas fa-chevron-left"></i> Back to Menu
+    </button>
+  </div>
+
+  <!-- Category Header -->
+  <div class="category-header" id="categoryHeader">
+    <div class="container">
+      <div class="category-header-content">
+        <div class="category-header-image" id="categoryHeaderImage">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=85" alt="Category" loading="lazy">
+        </div>
+        <div class="category-header-info">
+          <h1 id="categoryTitle">Breakfast</h1>
+          <p id="categoryDescription">Explore a wide variety of breakfast items and restaurants serving fresh, delicious breakfast cuisine.</p>
+          <div class="category-header-stats">
+            <div class="category-stat">
+              <span class="category-stat-icon">🏪</span>
+              <span id="restaurantCount">120 Restaurants</span>
+            </div>
+            <div class="category-stat">
+              <span class="category-stat-icon">⏱️</span>
+              <span>30 min delivery</span>
+            </div>
+            <div class="category-stat">
+              <span class="category-stat-icon">⭐</span>
+              <span>4.8+ ratings</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="category-controls">
+        <div style="position:relative;flex:1;min-width:200px;">
+          <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.85rem;"></i>
+          <input type="text" id="catSearchInput" placeholder="Search items in this category..." style="width:100%;padding:10px 14px 10px 32px;background:var(--bg-4);border:1px solid var(--card-border);border-radius:8px;color:var(--text);font-size:0.9rem;outline:none;">
+        </div>
+        <select id="sortSelect">
+          <option value="default">Sort by</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="name">A-Z</option>
+        </select>
+      </div>
+      <!-- Subcategory Tabs -->
+      <div id="subCategoryTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="category-section">
+      <div class="category-title" id="categoryListTitle">Top Restaurants</div>
+      
+      <!-- Restaurant Grid -->
+      <div class="restaurant-grid" id="restaurantGrid">
+        <div class="menu-card skeleton"></div>
+        <div class="menu-card skeleton"></div>
+        <div class="menu-card skeleton"></div>
+        <div class="menu-card skeleton"></div>
+        <div class="menu-card skeleton"></div>
+        <div class="menu-card skeleton"></div>
+      </div>
+
+      <!-- No Results -->
+      <div id="noResultsMessage" style="display: none;" class="no-results-category">
+        <div class="no-results-icon">🔍</div>
+        <div class="no-results-text">No restaurants found</div>
+        <div class="no-results-hint">Try adjusting your filters or search criteria</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FLOATING BUTTONS ── -->
+<button class="whatsapp-btn" id="whatsappBtn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+<button class="live-chat-btn" id="liveChatBtn" aria-label="Live Chat"><i class="fas fa-comments"></i></button>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️</button>
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></button>
+
+<!-- ── ITEM MODAL ── -->
+<div class="modal-overlay" id="itemOverlay"></div>
+<div class="item-modal" id="itemModal">
+  <button class="modal-close-btn" id="closeItem"><i class="fas fa-times"></i></button>
+  <div class="item-modal-img-wrap">
+    <img src="" alt="" id="itemModalImg">
+    <div class="item-modal-badge" id="itemModalBadge"></div>
+  </div>
+  <div class="item-modal-body">
+    <div class="item-modal-cat" id="itemModalCat"></div>
+    <h2 class="item-modal-name" id="itemModalName"></h2>
+    <div class="item-modal-rating" id="itemModalRating"></div>
+    <p class="item-modal-desc" id="itemModalDesc"></p>
+    <div class="item-modal-meta">
+      <div class="item-meta-chip" id="itemModalCalories"></div>
+      <div class="item-meta-chip">🕐 25–30 min</div>
+    </div>
+    <div class="item-modal-price" id="itemModalPrice"></div>
+    <div class="item-modal-actions">
+      <div class="qty-control">
+        <button class="qty-btn" id="itemQtyMinus">−</button>
+        <span id="itemQtyVal">1</span>
+        <button class="qty-btn" id="itemQtyPlus">+</button>
+      </div>
+      <button class="btn-modal-add" id="itemModalAdd"><i class="fas fa-bag-shopping"></i> Add to Cart</button>
+      <button class="btn-modal-wishlist" id="itemModalWishlist" aria-label="Wishlist">🤍</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="authOverlay"></div>
+<div class="auth-modal" id="authModal">
+  <div class="auth-particles" id="authParticles"></div>
+  <div class="auth-inner">
+    <button class="modal-close-btn" id="closeAuth"><i class="fas fa-times"></i></button>
+    <div class="auth-header">
+      <div class="auth-logo">🔥</div>
+      <h2>Blaze Kitchen</h2>
+      <p>Sign in to order your favourites</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Login</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="auth-form active">
+      <div class="role-select-wrap">
+        <button type="button" class="role-btn active" data-role="user"><i class="fas fa-user"></i> Customer</button>
+        <button type="button" class="role-btn" data-role="admin"><i class="fas fa-crown"></i> Admin</button>
+      </div>
+      <div class="float-group">
+        <input type="email" id="loginEmail" class="float-input" placeholder=" " autocomplete="email" required>
+        <label class="float-label" for="loginEmail">Email address</label>
+        <span class="float-icon fas fa-envelope"></span>
+      </div>
+      <div class="float-group">
+        <input type="password" id="loginPassword" class="float-input" placeholder=" " autocomplete="current-password" required>
+        <label class="float-label" for="loginPassword">Password</label>
+        <span class="float-icon fas fa-lock"></span>
+        <button type="button" class="float-right toggle-pass" data-target="loginPassword"><i class="fas fa-eye"></i></button>
+      </div>
+      <button type="submit" class="btn-auth" id="loginSubmit">
+        <span>Login</span><i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── LIVE CHAT PANEL ── -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <span class="chat-status-dot"></span>
+      <div>
+        <div class="chat-title">Blaze AI Support</div>
+        <div class="chat-subtitle">Powered by Ollama</div>
+      </div>
+    </div>
+    <button class="btn-close-chat" id="closeChatBtn"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" placeholder="Type a message…">
+    <button class="btn-send-chat" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- ── CART PANEL ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCatCart()"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div><h3>Your Cart</h3><span class="cart-item-count" id="cartItemLabel">0 items</span></div>
+    <button class="close-btn" id="closeCart" onclick="closeCatCart()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-body" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-summary-row"><span>Subtotal</span><span id="catSubtotal">₹0</span></div>
+    <div class="cart-summary-row total-row"><span>Total</span><span id="catTotal">₹0</span></div>
+    <button class="btn-checkout" id="catCheckoutBtn" onclick="window.location.href='checkout.html'">
+      <span>Checkout</span><i class="fas fa-arrow-right"></i>
+    </button>
+  </div>
+</aside>
+
+<!-- ── TOAST ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/scroll-anim.js"></script>
+<script src="js/category.js"></script>
+</body>
+</html>

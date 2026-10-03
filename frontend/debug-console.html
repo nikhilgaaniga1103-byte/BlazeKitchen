@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend Debug Console - Blaze Kitchen</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Courier New', monospace; 
+      background: #0a0e27; 
+      color: #0f0; 
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 { color: #FF5E00; margin-bottom: 20px; border-bottom: 2px solid #FF5E00; padding-bottom: 10px; }
+    h2 { color: #0f0; margin-top: 20px; margin-bottom: 10px; }
+    .section { 
+      background: #1a1f3a; 
+      border: 1px solid #FF5E00; 
+      border-radius: 8px; 
+      padding: 15px; 
+      margin-bottom: 20px;
+    }
+    .status { 
+      padding: 10px; 
+      margin: 10px 0; 
+      border-radius: 4px; 
+      border-left: 4px solid;
+    }
+    .success { 
+      background: #0d3a0d; 
+      border-left-color: #0f0;
+      color: #0f0;
+    }
+    .error { 
+      background: #3a0d0d; 
+      border-left-color: #f00;
+      color: #f00;
+    }
+    .warning { 
+      background: #3a3a0d; 
+      border-left-color: #ff0;
+      color: #ff0;
+    }
+    .info { 
+      background: #0d1a3a; 
+      border-left-color: #0ff;
+      color: #0ff;
+    }
+    code, pre { 
+      background: #000; 
+      color: #0f0; 
+      padding: 10px; 
+      border-radius: 4px;
+      overflow-x: auto;
+      border: 1px solid #333;
+      font-size: 12px;
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin: 10px 0;
+    }
+    th, td { 
+      padding: 10px; 
+      text-align: left; 
+      border-bottom: 1px solid #333;
+    }
+    th { 
+      background: #FF5E00; 
+      color: #000;
+      font-weight: bold;
+    }
+    tr:hover { background: #2a2f4a; }
+    button {
+      background: #FF5E00;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #ff7a33;
+    }
+    .log-entry {
+      padding: 8px;
+      margin: 5px 0;
+      border-left: 3px solid #0f0;
+      background: #0a0e27;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔥 Blaze Kitchen - Frontend Debug Console</h1>
+  
+  <div class="section">
+    <h2>🛠️ Test Controls</h2>
+    <button onclick="testAPI()">Test API Connection</button>
+    <button onclick="loadAndDisplay()">Load Menu Data</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    <button onclick="location.reload()">Reload Page</button>
+  </div>
+
+  <div class="section">
+    <h2>📊 Live Status</h2>
+    <div id="apiStatus" class="status info">Checking...</div>
+    <div id="dataStatus" class="status info">Waiting for action...</div>
+  </div>
+
+  <div class="section">
+    <h2>🔍 API Response (Raw)</h2>
+    <pre id="apiResponse">Loading...</pre>
+  </div>
+
+  <div class="section">
+    <h2>📈 Categories Found</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Category Name</th>
+          <th>Subcategories</th>
+          <th>Total Items</th>
+        </tr>
+      </thead>
+      <tbody id="categoriesTable">
+        <tr><td colspan="4">No data yet</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>📋 Flattened Items (First 15)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Subcategory</th>
+        </tr>
+      </thead>
+      <tbody id="itemsTable">
+        <tr><td colspan="5">No data yet</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>📝 Debug Logs</h2>
+    <div id="logs" style="background: #000; color: #0f0; padding: 15px; border-radius: 4px; max-height: 400px; overflow-y: auto; font-size: 12px;">
+      <div class="log-entry">Ready for testing...</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚙️ System Info</h2>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>API Base</td>
+        <td><code>http://localhost:5000/api</code></td>
+      </tr>
+      <tr>
+        <td>Frontend URL</td>
+        <td><code>http://localhost:3000</code></td>
+      </tr>
+      <tr>
+        <td>Browser</td>
+        <td id="browserInfo">Detecting...</td>
+      </tr>
+      <tr>
+        <td>Timestamp</td>
+        <td id="timestamp">-</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+let logs = [];
+
+function addLog(message, type = 'info') {
+  const timestamp = new Date().toLocaleTimeString();
+  const entry = `[${timestamp}] ${message}`;
+  logs.push({ message: entry, type });
+  updateLogsDisplay();
+  console.log(`[${type.toUpperCase()}]`, message);
+}
+
+function updateLogsDisplay() {
+  const logsDiv = document.getElementById('logs');
+  logsDiv.innerHTML = logs.map(log => {
+    const color = {
+      'error': '#f00',
+      'success': '#0f0',
+      'warning': '#ff0',
+      'info': '#0ff'
+    }[log.type] || '#fff';
+    return `<div class="log-entry" style="color: ${color};">${log.message}</div>`;
+  }).join('');
+  logsDiv.scrollTop = logsDiv.scrollHeight;
+}
+
+function clearLogs() {
+  logs = [];
+  updateLogsDisplay();
+  addLog('Logs cleared', 'info');
+}
+
+async function testAPI() {
+  addLog('Testing API connection...', 'info');
+  try {
+    const response = await fetch(`${API_BASE}/health`);
+    if (response.ok) {
+      const data = await response.json();
+      addLog(`✅ API is running: ${data.message}`, 'success');
+      document.getElementById('apiStatus').innerHTML = 
+        `<strong>✅ API Connected</strong><br>${data.message}<br>Environment: ${data.env}`;
+      document.getElementById('apiStatus').className = 'status success';
+    } else {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (err) {
+    addLog(`❌ API Error: ${err.message}`, 'error');
+    document.getElementById('apiStatus').innerHTML = `<strong>❌ API Connection Failed</strong><br>${err.message}`;
+    document.getElementById('apiStatus').className = 'status error';
+  }
+}
+
+async function loadAndDisplay() {
+  addLog('Fetching menu data from API...', 'info');
+  try {
+    const response = await fetch(`${API_BASE}/menu`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const data = await response.json();
+    addLog(`✅ Received API response`, 'success');
+    
+    // Display raw response
+    document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
+    
+    const categories = data.data || data;
+    addLog(`📦 API returned ${categories.length} categories`, 'info');
+    
+    // Process categories
+    let totalItems = 0;
+    let flatItems = [];
+    let catIndex = 0;
+    
+    let catHtml = '';
+    categories.forEach((cat, idx) => {
+      const catName = cat.category || `Category ${idx + 1}`;
+      const subcats = cat.subcategories || [];
+      let itemCount = 0;
+      
+      subcats.forEach(subcat => {
+        const items = subcat.items || [];
+        itemCount += items.length;
+        
+        items.forEach(item => {
+          flatItems.push({
+            name: item.name || 'Unknown',
+            price: (item.prices && item.prices[0]) || item.price || 0,
+            category: catName,
+            subcategory: subcat.name || 'General',
+            image: item.image_url || item.image || 'N/A'
+          });
+        });
+      });
+      
+      totalItems += itemCount;
+      catHtml += `<tr>
+        <td>${idx + 1}</td>
+        <td>${catName}</td>
+        <td>${subcats.length}</td>
+        <td>${itemCount}</td>
+      </tr>`;
+      
+      addLog(`📂 Category: ${catName} (${itemCount} items in ${subcats.length} subcats)`, 'info');
+    });
+    
+    document.getElementById('categoriesTable').innerHTML = catHtml;
+    
+    // Display first 15 items
+    let itemsHtml = '';
+    flatItems.slice(0, 15).forEach((item, idx) => {
+      itemsHtml += `<tr>
+        <td>${idx + 1}</td>
+        <td>${item.name}</td>
+        <td>₹${item.price}</td>
+        <td>${item.category}</td>
+        <td>${item.subcategory}</td>
+      </tr>`;
+    });
+    document.getElementById('itemsTable').innerHTML = itemsHtml;
+    
+    addLog(`✅ Processed ${totalItems} total items from ${categories.length} categories`, 'success');
+    addLog(`✅ Flattened into ${flatItems.length} individual items`, 'success');
+    
+    document.getElementById('dataStatus').innerHTML = 
+      `<strong>✅ Data Loaded Successfully</strong><br>` +
+      `Categories: ${categories.length}<br>` +
+      `Total Items: ${totalItems}<br>` +
+      `Flattened Items: ${flatItems.length}`;
+    document.getElementById('dataStatus').className = 'status success';
+    
+  } catch (err) {
+    addLog(`❌ Menu Load Error: ${err.message}`, 'error');
+    document.getElementById('dataStatus').innerHTML = `<strong>❌ Load Failed</strong><br>${err.message}`;
+    document.getElementById('dataStatus').className = 'status error';
+  }
+}
+
+// Initialize
+window.addEventListener('load', () => {
+  document.getElementById('browserInfo').textContent = navigator.userAgent.substring(0, 50);
+  document.getElementById('timestamp').textContent = new Date().toLocaleString();
+  addLog('🚀 Debug console ready', 'success');
+  addLog('Click "Test API Connection" to start', 'info');
+});
+</script>
+
+</body>
+</html>

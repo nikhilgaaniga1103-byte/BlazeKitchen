@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Frontend Menu Loading Test</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #1a1a1a; color: #fff; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #FF5E00; }
+    .test-section { background: #222; padding: 20px; margin: 20px 0; border-radius: 8px; }
+    .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .success { background: #0d5d0d; color: #90EE90; }
+    .error { background: #5d0d0d; color: #FF6B6B; }
+    .info { background: #0d3d5d; color: #87CEEB; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #444; }
+    th { background: #FF5E00; color: #fff; }
+    tr:hover { background: #333; }
+    .code { background: #111; padding: 10px; border-radius: 4px; font-family: monospace; overflow-x: auto; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔥 Blaze Kitchen - Frontend Menu Loading Test</h1>
+  
+  <div class="test-section">
+    <h2>API Connection Test</h2>
+    <div id="apiTest" class="status info">Testing API...</div>
+  </div>
+
+  <div class="test-section">
+    <h2>Menu Data Summary</h2>
+    <div id="menuSummary" class="status info">Loading...</div>
+  </div>
+
+  <div class="test-section">
+    <h2>Categories Found</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Items Count</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="categoriesTable">
+        <tr><td colspan="3">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="test-section">
+    <h2>Sample Items (First 10)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      <tbody id="itemsTable">
+        <tr><td colspan="4">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="test-section">
+    <h2>Raw API Response (First Category)</h2>
+    <div id="rawResponse" class="code">Loading...</div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+async function runTests() {
+  try {
+    // Test 1: API Health Check
+    console.log('🔍 Testing API health...');
+    const healthRes = await fetch(`${API_BASE}/health`);
+    if (healthRes.ok) {
+      document.getElementById('apiTest').innerHTML = '✅ API is running on http://localhost:5000';
+      document.getElementById('apiTest').className = 'status success';
+    }
+
+    // Test 2: Fetch Menu Data
+    console.log('🔍 Fetching menu data...');
+    const menuRes = await fetch(`${API_BASE}/menu`);
+    const menuData = await menuRes.json();
+    
+    console.log('Menu data:', menuData);
+    
+    const categories = menuData.data || menuData;
+    console.log('Categories count:', categories.length);
+
+    // Test 3: Parse and flatten data
+    let totalItems = 0;
+    const categoryStats = {};
+    let allFlatItems = [];
+
+    categories.forEach(categoryDoc => {
+      const mainCategory = categoryDoc.category || 'Menu';
+      let itemCount = 0;
+
+      if (categoryDoc.subcategories && Array.isArray(categoryDoc.subcategories)) {
+        categoryDoc.subcategories.forEach(subcat => {
+          if (subcat.items && Array.isArray(subcat.items)) {
+            itemCount += subcat.items.length;
+            subcat.items.forEach(item => {
+              allFlatItems.push({
+                name: item.name,
+                price: (item.prices && item.prices[0]) || item.price || 0,
+                category: mainCategory,
+                image: item.image_url || item.image || 'N/A'
+              });
+            });
+          }
+        });
+      }
+
+      totalItems += itemCount;
+      categoryStats[mainCategory] = itemCount;
+    });
+
+    // Update Summary
+    document.getElementById('menuSummary').innerHTML = `
+      ✅ Successfully loaded ${totalItems} items from ${categories.length} categories<br>
+      📊 Total flattened items: ${allFlatItems.length}
+    `;
+    document.getElementById('menuSummary').className = 'status success';
+
+    // Update Categories Table
+    let catHtml = '';
+    Object.keys(categoryStats).sort().forEach(cat => {
+      catHtml += `<tr>
+        <td>${cat}</td>
+        <td>${categoryStats[cat]}</td>
+        <td>✅ ${categoryStats[cat] > 0 ? 'Items present' : 'Empty'}</td>
+      </tr>`;
+    });
+    document.getElementById('categoriesTable').innerHTML = catHtml;
+
+    // Update Items Table (First 10)
+    let itemsHtml = '';
+    allFlatItems.slice(0, 10).forEach(item => {
+      itemsHtml += `<tr>
+        <td>${item.name}</td>
+        <td>₹${item.price}</td>
+        <td>${item.category}</td>
+        <td>${item.image === 'N/A' ? '❌ No image' : '✅ Has image'}</td>
+      </tr>`;
+    });
+    document.getElementById('itemsTable').innerHTML = itemsHtml;
+
+    // Raw Response
+    document.getElementById('rawResponse').innerHTML = `<pre>${JSON.stringify(categories[0], null, 2)}</pre>`;
+
+    console.log('✅ All tests passed!');
+    console.log(`Total items: ${totalItems}`);
+    console.log(`Flattened items: ${allFlatItems.length}`);
+    console.log('Sample items:', allFlatItems.slice(0, 5));
+
+  } catch (err) {
+    console.error('❌ Test error:', err);
+    document.getElementById('apiTest').innerHTML = `❌ Error: ${err.message}`;
+    document.getElementById('apiTest').className = 'status error';
+  }
+}
+
+// Run tests on page load
+window.addEventListener('load', runTests);
+</script>
+
+</body>
+</html>

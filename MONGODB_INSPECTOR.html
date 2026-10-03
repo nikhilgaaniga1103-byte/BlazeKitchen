@@ -1,0 +1,132 @@
+<!-- MongoDB Data Inspection Page -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MongoDB Data Inspector</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    .box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+    button { background: #FF5E00; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #e64d00; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; }
+    h2 { color: #FF5E00; }
+    .success { background: #d4edda; padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .error { background: #f8d7da; padding: 10px; margin: 10px 0; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<h1>🔥 MongoDB Data Inspector</h1>
+
+<div class="box">
+  <h2>1. Check /api/menu Endpoint</h2>
+  <button onclick="checkMenuEndpoint()">Test /api/menu</button>
+  <div id="menu-result"></div>
+</div>
+
+<div class="box">
+  <h2>2. Check /api/menus Endpoint</h2>
+  <button onclick="checkMenusEndpoint()">Test /api/menus</button>
+  <div id="menus-result"></div>
+</div>
+
+<div class="box">
+  <h2>3. Show First Item Structure</h2>
+  <button onclick="showItemStructure()">Get Item Structure</button>
+  <div id="structure-result"></div>
+</div>
+
+<div class="box">
+  <h2>4. Show All Categories Found</h2>
+  <button onclick="showCategories()">Get Categories</button>
+  <div id="categories-result"></div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+async function checkMenuEndpoint() {
+  try {
+    const res = await fetch(`${API_BASE}/menu`);
+    const data = await res.json();
+    const html = `
+      <div class="success">✅ /api/menu works</div>
+      <pre>Success: ${data.success}
+Count: ${data.count}
+Response structure: ${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>
+    `;
+    document.getElementById('menu-result').innerHTML = html;
+  } catch (err) {
+    document.getElementById('menu-result').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  }
+}
+
+async function checkMenusEndpoint() {
+  try {
+    const res = await fetch(`${API_BASE}/menus`);
+    const data = await res.json();
+    const html = `
+      <div class="success">✅ /api/menus works</div>
+      <pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>
+    `;
+    document.getElementById('menus-result').innerHTML = html;
+  } catch (err) {
+    document.getElementById('menus-result').innerHTML = `<div class="error">❌ /api/menus not found - This is expected. Use /api/menu instead.</div>`;
+  }
+}
+
+async function showItemStructure() {
+  try {
+    const res = await fetch(`${API_BASE}/menu`);
+    const data = await res.json();
+    
+    let items = data.data;
+    if (!Array.isArray(items)) {
+      items = data.data?.items || [];
+    }
+    
+    if (items.length > 0) {
+      const firstItem = items[0];
+      const html = `
+        <div class="success">✅ Found first item</div>
+        <h3>Item Structure:</h3>
+        <pre>${JSON.stringify(firstItem, null, 2)}</pre>
+      `;
+      document.getElementById('structure-result').innerHTML = html;
+    } else {
+      document.getElementById('structure-result').innerHTML = `<div class="error">❌ No items found</div>`;
+    }
+  } catch (err) {
+    document.getElementById('structure-result').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  }
+}
+
+async function showCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/menu`);
+    const data = await res.json();
+    
+    let items = data.data;
+    if (!Array.isArray(items)) {
+      items = data.data?.items || [];
+    }
+    
+    const categories = [...new Set(items.map(i => i.category || i.name || 'unknown'))];
+    const stats = {};
+    categories.forEach(cat => {
+      stats[cat] = items.filter(i => (i.category || i.name) === cat).length;
+    });
+    
+    const html = `
+      <div class="success">✅ Found ${categories.length} categories</div>
+      <pre>${JSON.stringify(stats, null, 2)}</pre>
+    `;
+    document.getElementById('categories-result').innerHTML = html;
+  } catch (err) {
+    document.getElementById('categories-result').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  }
+}
+</script>
+
+</body>
+</html>

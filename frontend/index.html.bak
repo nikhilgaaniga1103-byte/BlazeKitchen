@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blaze Kitchen — Fire-Crafted Excellence | Cloud Kitchen Bangalore</title>
+  <meta name="description" content="Premium cloud kitchen delivering 120+ signature dishes in 30 minutes. Gourmet burgers, artisan coffee, desserts & more. Order now with BLAZE50 for ₹50 off.">
+  <meta name="keywords" content="cloud kitchen bangalore, gourmet burgers, food delivery, blaze kitchen">
+  <meta name="theme-color" content="#FF5E00">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Blaze Kitchen — Fire-Crafted Excellence">
+  <meta property="og:description" content="120+ signature dishes. Zero compromises. Delivered in 30 minutes.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200">
+  <meta property="og:type" content="website">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ── CURSOR ── -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- ── PWA INSTALL BANNER ── -->
+<div class="pwa-banner" id="pwaBanner">
+  <div class="pwa-banner-text">🔥 Install Blaze Kitchen App for a better experience!</div>
+  <div class="pwa-banner-actions">
+    <button class="btn-pwa-install" id="pwaInstall">Install</button>
+    <button class="btn-pwa-dismiss" id="pwaDismiss">Not now</button>
+  </div>
+</div>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-container">
+    <a href="#" class="logo">
+      <span class="logo-fire">🔥</span>
+      <span class="logo-text">BLAZE</span>
+      <span class="logo-sub">KITCHEN</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#menu" class="nav-link">Menu</a></li>
+      <li><a href="#specials" class="nav-link">Specials</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-btn wishlist-btn" id="wishlistBtn" aria-label="Wishlist">
+        <i class="fas fa-heart"></i>
+        <span class="wishlist-count" id="wishlistCount">0</span>
+      </button>
+      <button class="nav-btn cart-btn" id="cartBtn">
+        <i class="fas fa-bag-shopping"></i>
+        <span>Cart</span>
+        <span class="cart-badge" id="cartCount">0</span>
+      </button>
+      <button class="nav-btn login-btn" id="loginBtn">
+        <i class="fas fa-user-circle"></i>
+        <span id="loginBtnText">Login</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#menu" class="mobile-nav-link" onclick="closeMobileMenu()">Menu</a>
+  <a href="#specials" class="mobile-nav-link" onclick="closeMobileMenu()">Specials</a>
+  <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+  <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide active" style="--slide-img:url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1600&q=90&fit=crop')"></div>
+    <div class="hero-slide" style="--slide-img:url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=1600&q=90&fit=crop')"></div>
+    <div class="hero-slide" style="--slide-img:url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1600&q=90&fit=crop')"></div>
+    <div class="hero-slide" style="--slide-img:url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=1600&q=90&fit=crop')"></div>
+    <div class="hero-slide" style="--slide-img:url('https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=1600&q=90&fit=crop')"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="hero-dot"></span><span>Cloud Kitchen · Bangalore</span><span class="hero-dot"></span>
+    </div>
+    <h1 class="hero-title">
+      <span class="hero-title-line" data-text="FIRE-CRAFTED">FIRE-CRAFTED</span>
+      <span class="hero-title-line accent" data-text="EXCELLENCE">EXCELLENCE</span>
+    </h1>
+    <p class="hero-desc">Over 120 signature dishes. Zero compromises. Delivered to your door in 30 minutes.</p>
+    <div class="hero-actions">
+      <button class="btn-hero-primary" id="scrollToMenu">
+        <span>Explore Menu</span><i class="fas fa-arrow-right"></i>
+      </button>
+      <button class="btn-hero-secondary" id="heroOrderBtn">
+        <i class="fas fa-bolt"></i><span>Order Now</span>
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="stat-num">120+</span><span class="stat-label">Menu Items</span></div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat"><span class="stat-num">30 min</span><span class="stat-label">Delivery</span></div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat"><span class="stat-num">4.9★</span><span class="stat-label">Rating</span></div>
+    </div>
+  </div>
+  <div class="hero-slider-nav">
+    <button class="slider-dot active" data-index="0"></button>
+    <button class="slider-dot" data-index="1"></button>
+    <button class="slider-dot" data-index="2"></button>
+    <button class="slider-dot" data-index="3"></button>
+    <button class="slider-dot" data-index="4"></button>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span><div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>🔥 Free delivery on orders above ₹499</span>
+    <span>⚡ Use code BLAZE50 for ₹50 off</span>
+    <span>🍔 New Korean BBQ Burger is here!</span>
+    <span>🎉 Use FIRST100 for ₹100 off your first order</span>
+    <span>🍕 Family Feast Box — serves 4 for just ₹999</span>
+    <span>🔥 Free delivery on orders above ₹499</span>
+    <span>⚡ Use code BLAZE50 for ₹50 off</span>
+    <span>🍔 New Korean BBQ Burger is here!</span>
+    <span>🎉 Use FIRST100 for ₹100 off your first order</span>
+    <span>🍕 Family Feast Box — serves 4 for just ₹999</span>
+  </div>
+</div>
+
+<!-- ── MENU ── -->
+<section class="category-strip" id="menu">
+  <div class="container">
+    <div class="section-header reveal" id="menuHeader">
+      <div class="section-label">EXPLORE</div>
+      <h2 class="section-title">Order our best <span class="accent-text">food options</span></h2>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrapper">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search burgers, shakes, desserts…" class="search-input" autocomplete="off">
+        <button class="search-clear" id="searchClear" style="display:none"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+
+    <!-- Category Carousel (Horizontal Tabs) -->
+    <div class="category-carousel-wrapper">
+      <button class="carousel-arrow carousel-arrow-left" id="categoryScrollLeft">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="category-carousel" id="categoryCarousel">
+        <!-- Categories will be populated from API -->
+      </div>
+      <button class="carousel-arrow carousel-arrow-right" id="categoryScrollRight">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Advanced Filters (hidden by default, can still be used with search) -->
+    <div class="advanced-filter-row" style="display:none">
+      <button class="adv-filter-chip" id="advVeg"><i class="fas fa-leaf"></i> Veg Only</button>
+      <button class="adv-filter-chip" id="advAvailable"><i class="fas fa-circle-check"></i> Available Now</button>
+      <div class="calorie-range">
+        <span>Max Calories:</span>
+        <input type="range" id="calFilter" min="100" max="1500" value="1500" step="50">
+        <span id="calVal">1500 kcal</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MENU SECTION ── -->
+<section class="menu-section">
+  <div class="container">
+    <!-- Menu Toolbar -->
+    <div class="menu-toolbar">
+      <div class="menu-result-count" id="resultCount"></div>
+      <select class="sort-select" id="sortSelect">
+        <option value="default">Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">A–Z</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+
+    <div class="menu-grid" id="menuGrid">
+      <div class="menu-card skeleton"></div>
+      <div class="menu-card skeleton"></div>
+      <div class="menu-card skeleton"></div>
+      <div class="menu-card skeleton"></div>
+      <div class="menu-card skeleton"></div>
+      <div class="menu-card skeleton"></div>
+    </div>
+    <div class="load-more-wrapper">
+      <button class="btn-load-more" id="loadMoreBtn" style="display:none">
+        <span>Load More</span><i class="fas fa-chevron-down"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── SPECIALS ── -->
+<section class="specials" id="specials">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">CHEF'S PICKS</div>
+      <h2 class="section-title">Today's <span class="accent-text">Specials</span></h2>
+    </div>
+    <div class="specials-grid">
+      <div class="special-card special-card--fire">
+        <div class="special-card-bg" style="background-image:url('https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800&q=80')"></div>
+        <div class="special-card-content">
+          <span class="special-tag">🔥 HOT</span>
+          <h3>Spicy Ghost Burger</h3>
+          <p>Ghost pepper sauce, fiery jalapeños, pepper jack cheese</p>
+          <div class="special-price">₹279</div>
+          <button class="btn-special" onclick="quickAdd('Spicy Ghost Burger',279,'burgers','https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&q=80')">Add to Cart</button>
+        </div>
+      </div>
+      <div class="special-card special-card--sweet">
+        <div class="special-card-bg" style="background-image:url('https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800&q=80')"></div>
+        <div class="special-card-content">
+          <span class="special-tag">⭐ BESTSELLER</span>
+          <h3>Molten Lava Cake</h3>
+          <p>Warm chocolate cake, flowing molten center, vanilla ice cream</p>
+          <div class="special-price">₹199</div>
+          <button class="btn-special" onclick="quickAdd('Molten Lava Cake',199,'desserts','https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80')">Add to Cart</button>
+        </div>
+      </div>
+      <div class="special-card special-card--brew">
+        <div class="special-card-bg" style="background-image:url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&q=80')"></div>
+        <div class="special-card-content">
+          <span class="special-tag">☕ NEW</span>
+          <h3>Signature Cold Brew</h3>
+          <p>Single origin beans, cold brewed 24 hours. Black or oat milk.</p>
+          <div class="special-price">₹149</div>
+          <button class="btn-special" onclick="quickAdd('Signature Cold Brew',149,'coffee','https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&q=80')">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COUNTERS ── -->
+<section class="counters-section">
+  <div class="container">
+    <div class="counters-grid">
+      <div class="reveal">
+        <div class="counter-num" data-target="50000" data-suffix="+">0+</div>
+        <div class="counter-label">Orders Delivered</div>
+      </div>
+      <div class="reveal">
+        <div class="counter-num" data-target="120" data-suffix="+">0+</div>
+        <div class="counter-label">Menu Items</div>
+      </div>
+      <div class="reveal">
+        <div class="counter-num" data-target="98" data-suffix="%">0%</div>
+        <div class="counter-label">Satisfaction Rate</div>
+      </div>
+      <div class="reveal">
+        <div class="counter-num" data-target="5" data-suffix=" Yrs">0 Yrs</div>
+        <div class="counter-label">Years of Excellence</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-img-main">
+          <img src="https://images.unsplash.com/photo-1555939594-58d7cb561231?w=600&q=80" alt="Blaze Kitchen" loading="lazy">
+        </div>
+        <div class="about-img-secondary">
+          <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=300&q=80" alt="Fresh Ingredients" loading="lazy">
+        </div>
+        <div class="about-badge">
+          <span class="about-badge-num">5+</span>
+          <span class="about-badge-text">Years of<br>Fire</span>
+        </div>
+      </div>
+      <div class="about-content reveal">
+        <div class="section-label">OUR STORY</div>
+        <h2 class="section-title">Born in <span class="accent-text">Fire</span>,<br>Served with Love</h2>
+        <p class="about-desc">Blaze Kitchen started as a single kitchen with one obsession — making food that makes people close their eyes and pause. From our signature gourmet burgers to artisan cold brews, every dish is crafted fresh to order with premium ingredients.</p>
+
+        <!-- Timeline -->
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-year">2019</div>
+            <div class="timeline-title">The Spark 🔥</div>
+            <div class="timeline-text">Started in a 200 sqft kitchen with 5 burger recipes and a dream.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2021</div>
+            <div class="timeline-title">Going Digital</div>
+            <div class="timeline-text">Launched our own ordering platform, hit 10,000 orders in year one.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2023</div>
+            <div class="timeline-title">120+ Items Strong</div>
+            <div class="timeline-text">Expanded to full menu with coffee, desserts, combos & beverages.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2025</div>
+            <div class="timeline-title">Startup Grade 🚀</div>
+            <div class="timeline-text">AI recommendations, real-time tracking, and 50K+ happy customers.</div>
+          </div>
+        </div>
+
+        <div class="about-pillars">
+          <div class="pillar"><div class="pillar-icon">🥩</div><div class="pillar-text"><strong>Fresh Daily</strong><span>No frozen shortcuts</span></div></div>
+          <div class="pillar"><div class="pillar-icon">🚀</div><div class="pillar-text"><strong>30-Min Delivery</strong><span>Hot, every time</span></div></div>
+          <div class="pillar"><div class="pillar-icon">🌙</div><div class="pillar-text"><strong>24/7 Open</strong><span>Midnight cravings? We got you</span></div></div>
+          <div class="pillar"><div class="pillar-icon">💰</div><div class="pillar-text"><strong>Fair Prices</strong><span>Premium taste, real value</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ── -->
+<section class="team-section">
+  <div class="container">
+    <div class="section-header centered reveal">
+      <div class="section-label">THE TEAM</div>
+      <h2 class="section-title">Meet the <span class="accent-text">Blazers</span></h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-img"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80" alt="Founder" loading="lazy"></div>
+        <div class="team-body">
+          <div class="team-name">Arjun Mehta</div>
+          <div class="team-role">Founder & Head Chef</div>
+          <div class="team-bio">Former Marriott chef who quit to chase his dream. The brain behind every recipe.</div>
+          <div class="team-socials">
+            <a href="#" class="team-social"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="team-social"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-img"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" alt="COO" loading="lazy"></div>
+        <div class="team-body">
+          <div class="team-name">Priya Sharma</div>
+          <div class="team-role">COO & Co-Founder</div>
+          <div class="team-bio">IIM grad who handles ops, tech, and makes sure food arrives hot.</div>
+          <div class="team-socials">
+            <a href="#" class="team-social"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="team-social"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-img"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="CTO" loading="lazy"></div>
+        <div class="team-body">
+          <div class="team-name">Rahul Dev</div>
+          <div class="team-role">CTO</div>
+          <div class="team-bio">Ex-Swiggy engineer powering the platform with AI and real-time tech.</div>
+          <div class="team-socials">
+            <a href="#" class="team-social"><i class="fab fa-github"></i></a>
+            <a href="#" class="team-social"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-img"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" alt="Head of Growth" loading="lazy"></div>
+        <div class="team-body">
+          <div class="team-name">Sneha Iyer</div>
+          <div class="team-role">Head of Growth</div>
+          <div class="team-bio">Digital marketing wizard behind Blaze's 500% growth in 2 years.</div>
+          <div class="team-socials">
+            <a href="#" class="team-social"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="team-social"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header centered reveal">
+      <div class="section-label">WHAT THEY SAY</div>
+      <h2 class="section-title">Customer <span class="accent-text">Love</span></h2>
+    </div>
+    <div class="testimonials-slider reveal">
+      <div class="testimonials-track" id="testimonialsTrack">
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"The Korean BBQ Burger changed my life. I've ordered it 8 times this month and I have zero regrets. Blaze Kitchen is THE best cloud kitchen in Bangalore."</p>
+            <div class="testimonial-author">
+              <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" alt="Customer">
+              <div><div class="testimonial-name">Karthik Nair</div><div class="testimonial-loc">Koramangala, Bangalore</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Order arrived in 22 minutes, piping hot. The Molten Lava Cake is the most dangerous thing I've ever eaten — I can't stop ordering it. My wallet hates Blaze."</p>
+            <div class="testimonial-author">
+              <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Customer">
+              <div><div class="testimonial-name">Ananya Krishnan</div><div class="testimonial-loc">Indiranagar, Bangalore</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"We ordered the Family Feast Box for our office team of 4 and it was PERFECT. Massive portions, incredible quality, great value. Blaze is our go-to now."</p>
+            <div class="testimonial-author">
+              <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&q=80" alt="Customer">
+              <div><div class="testimonial-name">Vikram Patel</div><div class="testimonial-loc">Whitefield, Bangalore</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-controls">
+        <button class="testimonial-btn" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+        <button class="testimonial-btn" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="testimonial-dots">
+        <div class="t-dot active"></div><div class="t-dot"></div><div class="t-dot"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-header centered reveal">
+      <div class="section-label">REACH US</div>
+      <h2 class="section-title">Get in <span class="accent-text">Touch</span></h2>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-card">
+        <div class="contact-icon-wrap"><i class="fas fa-location-dot"></i></div>
+        <h4>Address</h4><p>123 Food Street,<br>Culinary City, Bangalore</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon-wrap"><i class="fas fa-phone"></i></div>
+        <h4>Phone</h4><p>+91 9876543210<br>Mon–Sun, 11AM–11PM</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon-wrap"><i class="fas fa-envelope"></i></div>
+        <h4>Email</h4><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="76190412130436141a170c131d1f02151e13185815191b">[email&#160;protected]</a><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="760503060619040236141a170c131d1f02151e13185815191b">[email&#160;protected]</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon-wrap"><i class="fas fa-clock"></i></div>
+        <h4>Hours</h4><p>Mon–Sun: 11AM – 11PM<br>Late Night: Till 2AM</p>
+      </div>
+    </div>
+
+    <!-- Google Map -->
+    <div class="map-container reveal">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.5964986955!2d77.59369931482175!3d12.935316090884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae15c1b1b1b1b1%3A0x1b1b1b1b1b1b1b1b!2sBrigade%20Road%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        title="Blaze Kitchen Location">
+      </iframe>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section reveal">
+      <div class="section-label" style="margin-bottom:20px">FAQ</div>
+      <div class="faq-item">
+        <div class="faq-question"><span class="faq-question-text">What is the minimum order amount?</span><span class="faq-icon fas fa-plus"></span></div>
+        <div class="faq-answer">There is no minimum order amount. However, orders above ₹499 qualify for free delivery. Below that, a flat ₹40 delivery fee applies.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question"><span class="faq-question-text">How long does delivery take?</span><span class="faq-icon fas fa-plus"></span></div>
+        <div class="faq-answer">Our average delivery time is 25–30 minutes. For late-night orders or peak hours, it may take up to 40 minutes. You can track your order in real-time after placing it.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question"><span class="faq-question-text">Are there vegan or gluten-free options?</span><span class="faq-icon fas fa-plus"></span></div>
+        <div class="faq-answer">Yes! We have several plant-based options including our Veg Portobello Burger and Paneer Tikka Burger. Filter by 'Veg Only' in our menu. Contact us for specific allergen information.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question"><span class="faq-question-text">Can I modify my order after placing it?</span><span class="faq-icon fas fa-plus"></span></div>
+        <div class="faq-answer">Order modifications are possible within 2 minutes of placement. After that, the kitchen begins preparation. Please call us immediately at +91 9876543210 for urgent changes.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question"><span class="faq-question-text">How do coupon codes work?</span><span class="faq-icon fas fa-plus"></span></div>
+        <div class="faq-answer">Enter your coupon code at checkout. Available codes: BLAZE50 (₹50 off), FIRST100 (₹100 off first order), MIDNIGHT (₹80 off after 11PM), VIP200 (₹200 off). One code per order.</div>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form-section reveal">
+      <div class="section-label" style="margin-bottom:20px">SEND A MESSAGE</div>
+      <form class="contact-form-grid" id="contactForm">
+        <div class="cf-group">
+          <label>Your Name</label>
+          <input type="text" class="cf-input" placeholder="Arjun Kumar" required>
+        </div>
+        <div class="cf-group">
+          <label>Email Address</label>
+          <input type="email" class="cf-input" placeholder="arjun@email.com" required>
+        </div>
+        <div class="cf-group">
+          <label>Phone Number</label>
+          <input type="tel" class="cf-input" placeholder="+91 98765 43210">
+        </div>
+        <div class="cf-group">
+          <label>Subject</label>
+          <select class="cf-input">
+            <option>General Inquiry</option>
+            <option>Order Issue</option>
+            <option>Feedback</option>
+            <option>Franchise</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="cf-group form-full">
+          <label>Message</label>
+          <textarea class="cf-input cf-textarea" placeholder="Write your message here…" required></textarea>
+        </div>
+        <div style="grid-column:1/-1">
+          <button type="submit" class="btn-cf-submit">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">🔥 BLAZE KITCHEN</div>
+        <p>Fire-crafted food delivered to your door. Quality ingredients, real flavors, zero compromises.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="#">Burgers</a></li><li><a href="#">Beverages</a></li>
+          <li><a href="#">Desserts</a></li><li><a href="#">Coffee & Shakes</a></li>
+          <li><a href="#">Appetizers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li><li><a href="#">Careers</a></li>
+          <li><a href="#">Franchise</a></li><li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Refund Policy</a></li><li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Blaze Kitchen. All rights reserved. Made with 🔥 in Bangalore. | GST: 29AABCB1234R1Z5</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ── FLOATING BUTTONS ── -->
+<button class="whatsapp-btn" id="whatsappBtn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+<button class="live-chat-btn" id="liveChatBtn" aria-label="Live Chat"><i class="fas fa-comments"></i></button>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️</button>
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></button>
+
+<!-- ── LIVE CHAT PANEL ── -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <span class="chat-status-dot"></span>
+      <div>
+        <div class="chat-title">Blaze Support</div>
+        <div class="chat-subtitle">Typically replies in minutes</div>
+      </div>
+    </div>
+    <button class="btn-close-chat" id="closeChatBtn"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" placeholder="Type a message…">
+    <button class="btn-send-chat" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- ── CART PANEL ── -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div><h3>Your Cart</h3><span class="cart-item-count" id="cartItemLabel">0 items</span></div>
+    <button class="close-btn" id="closeCart"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-body" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <button class="btn-browse" onclick="closeCart();document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Browse Menu</button>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-summary-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+    <div class="cart-summary-row discount-row" id="discountRow" style="display:none">
+      <span>Discount</span><span id="discount" class="discount-val">−₹0</span>
+    </div>
+    <div class="cart-summary-row total-row"><span>Total</span><span id="total">₹0</span></div>
+    <button class="btn-checkout" id="checkoutBtn"><span>Checkout</span><i class="fas fa-arrow-right"></i></button>
+  </div>
+</aside>
+
+<!-- ── WISHLIST PANEL ── -->
+<div class="modal-overlay" id="wishlistOverlay"></div>
+<aside class="wishlist-panel" id="wishlistPanel">
+  <div class="wishlist-header">
+    <div><h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.04em">Wishlist ❤️</h3></div>
+    <button class="close-btn" id="closeWishlist"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="wishlist-body" id="wishlistBody"></div>
+</aside>
+
+<!-- ── ITEM MODAL ── -->
+<div class="modal-overlay" id="itemOverlay"></div>
+<div class="item-modal" id="itemModal">
+  <button class="modal-close-btn" id="closeItem"><i class="fas fa-times"></i></button>
+  <div class="item-modal-img-wrap">
+    <img src="" alt="" id="itemModalImg">
+    <div class="item-modal-badge" id="itemModalBadge"></div>
+  </div>
+  <div class="item-modal-body">
+    <div class="item-modal-cat" id="itemModalCat"></div>
+    <h2 class="item-modal-name" id="itemModalName"></h2>
+    <div class="item-modal-rating" id="itemModalRating"></div>
+    <p class="item-modal-desc" id="itemModalDesc"></p>
+    <div class="item-modal-meta">
+      <div class="item-meta-chip" id="itemModalCalories"></div>
+      <div class="item-meta-chip">🕐 25–30 min</div>
+    </div>
+    <div class="item-modal-price" id="itemModalPrice"></div>
+    <div class="item-modal-actions">
+      <div class="qty-control">
+        <button class="qty-btn" id="itemQtyMinus">−</button>
+        <span id="itemQtyVal">1</span>
+        <button class="qty-btn" id="itemQtyPlus">+</button>
+      </div>
+      <button class="btn-modal-add" id="itemModalAdd"><i class="fas fa-bag-shopping"></i> Add to Cart</button>
+      <button class="btn-modal-wishlist" id="itemModalWishlist" aria-label="Wishlist">🤍</button>
+    </div>
+
+    <!-- Reviews -->
+    <div class="reviews-section" style="margin-top:24px;border-top:1px solid var(--card-border);padding-top:20px">
+      <div class="reviews-header">
+        <div class="section-label" style="margin-bottom:0">REVIEWS</div>
+        <button class="btn-write-review" id="writeReviewToggle">Write a Review</button>
+      </div>
+      <!-- Write review form (hidden by default) -->
+      <div id="writeReviewForm" style="display:none;padding:16px 0;border-bottom:1px solid var(--card-border);margin-bottom:12px">
+        <div class="star-input" style="margin-bottom:10px">
+          <span class="active">★</span><span class="active">★</span><span class="active">★</span><span class="active">★</span><span class="active">★</span>
+        </div>
+        <textarea id="reviewText" class="cf-input cf-textarea" placeholder="Share your experience…" style="min-height:80px;margin-bottom:8px;width:100%;resize:none"></textarea>
+        <button id="submitReviewBtn" class="btn-apply">Post Review</button>
+      </div>
+      <div id="itemReviews"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="authOverlay"></div>
+<div class="auth-modal" id="authModal">
+  <!-- Particle background -->
+  <div class="auth-particles" id="authParticles"></div>
+  <div class="auth-inner">
+    <button class="modal-close-btn" id="closeAuth"><i class="fas fa-times"></i></button>
+    <div class="auth-header">
+      <div class="auth-logo">🔥</div>
+      <h2>Blaze Kitchen</h2>
+      <p>Sign in to order your favourites</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Login</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="auth-form active">
+      <!-- Role selector -->
+      <div class="role-select-wrap">
+        <button type="button" class="role-btn active" data-role="user"><i class="fas fa-user"></i> Customer</button>
+        <button type="button" class="role-btn" data-role="admin"><i class="fas fa-crown"></i> Admin</button>
+      </div>
+      <div class="float-group">
+        <input type="email" id="loginEmail" class="float-input" placeholder=" " autocomplete="email" required>
+        <label class="float-label" for="loginEmail">Email address</label>
+        <span class="float-icon fas fa-envelope"></span>
+      </div>
+      <div class="float-group">
+        <input type="password" id="loginPassword" class="float-input" placeholder=" " autocomplete="current-password" required>
+        <label class="float-label" for="loginPassword">Password</label>
+        <span class="float-icon fas fa-lock"></span>
+        <button type="button" class="float-right toggle-pass" data-target="loginPassword"><i class="fas fa-eye"></i></button>
+      </div>
+      <div style="text-align:right;margin-top:-8px"><a href="#" id="forgotPwLink" style="font-size:0.78rem;color:var(--orange)">Forgot password?</a></div>
+      <button type="submit" class="btn-auth" id="loginSubmit">
+        <span>Login</span><i class="fas fa-arrow-right"></i>
+      </button>
+      <div class="auth-divider"><span>or</span></div>
+      <button type="button" class="btn-google-auth">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.615 24 12.255 24z"/><path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 0 0 0 10.76l3.98-3.09z"/><path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.64 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continue with Google
+      </button>
+      <p class="demo-hint">Demo: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="364345534476545a574c535d5f42555e53581855595b">[email&#160;protected]</a></strong> / <strong>User@123</strong></p>
+    </form>
+
+    <!-- REGISTER FORM - Pre-OTP step -->
+    <div id="registerPreOtp" class="auth-form active" style="display:none;flex-direction:column;gap:14px">
+      <div class="float-group">
+        <input type="email" id="regEmail" class="float-input" placeholder=" " required>
+        <label class="float-label" for="regEmail">Email address</label>
+        <span class="float-icon fas fa-envelope"></span>
+      </div>
+      <button type="button" class="btn-auth" id="sendOtpBtn">
+        <span>Send OTP</span><i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <!-- OTP Section -->
+    <div id="otpSection" style="display:none" class="otp-section">
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px">Enter the 6-digit OTP sent to your email</p>
+      <div class="otp-inputs">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+      </div>
+      <button type="button" class="btn-auth" id="verifyOtpBtn">Verify OTP</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="auth-form" style="display:none">
+      <div class="float-group">
+        <input type="text" id="regName" class="float-input" placeholder=" " required>
+        <label class="float-label" for="regName">Full name</label>
+        <span class="float-icon fas fa-user"></span>
+      </div>
+      <div class="float-group">
+        <input type="password" id="regPassword" class="float-input" placeholder=" " required>
+        <label class="float-label" for="regPassword">Password</label>
+        <span class="float-icon fas fa-lock"></span>
+        <button type="button" class="float-right toggle-pass" data-target="regPassword"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="pw-strength">
+        <div class="pw-strength-bar">
+          <div class="pw-segment"></div><div class="pw-segment"></div>
+          <div class="pw-segment"></div><div class="pw-segment"></div><div class="pw-segment"></div>
+        </div>
+        <div class="pw-strength-text"></div>
+      </div>
+      <div class="auth-divider"><span>or</span></div>
+      <button type="button" class="btn-google-auth">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.615 24 12.255 24z"/><path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 0 0 0 10.76l3.98-3.09z"/><path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.64 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continue with Google
+      </button>
+      <button type="submit" class="btn-auth" id="registerSubmit">
+        <span>Create Account</span><i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── PAYMENT MODAL ── -->
+<div class="modal-overlay" id="paymentOverlay"></div>
+<div class="payment-modal" id="paymentModal">
+  <button class="modal-close-btn" id="closePayment"><i class="fas fa-times"></i></button>
+  <h2 class="payment-title">Place Your Order</h2>
+
+  <div class="payment-section">
+    <h4>Delivery Address</h4>
+    <div class="address-grid" id="addressGrid"></div>
+    <button class="btn-add-address"><i class="fas fa-plus"></i> Add New Address</button>
+  </div>
+
+  <div class="payment-section">
+    <h4>Payment Method</h4>
+    <div class="payment-methods">
+      <button class="payment-method active" data-method="upi"><i class="fas fa-mobile-alt"></i><span>UPI</span></button>
+      <button class="payment-method" data-method="card"><i class="fas fa-credit-card"></i><span>Card</span></button>
+      <button class="payment-method" data-method="wallet"><i class="fas fa-wallet"></i><span>Wallet</span></button>
+      <button class="payment-method" data-method="cod"><i class="fas fa-money-bill-wave"></i><span>COD</span></button>
+    </div>
+  </div>
+
+  <div class="payment-section">
+    <h4>Coupon Code</h4>
+    <div class="coupon-row">
+      <input type="text" id="couponCode" placeholder="Enter code (e.g. BLAZE50)" class="coupon-input">
+      <button class="btn-apply" id="applyCoupon">Apply</button>
+    </div>
+    <p class="coupon-hint">Available:
+      <span class="coupon-chip" onclick="document.getElementById('couponCode').value='BLAZE50'">BLAZE50</span>
+      <span class="coupon-chip" onclick="document.getElementById('couponCode').value='FIRST100'">FIRST100</span>
+      <span class="coupon-chip" onclick="document.getElementById('couponCode').value='MIDNIGHT'">MIDNIGHT</span>
+      <span class="coupon-chip" onclick="document.getElementById('couponCode').value='VIP200'">VIP200</span>
+    </p>
+  </div>
+
+  <div class="payment-summary">
+    <div class="pay-sum-row"><span>Subtotal</span><span id="paySubtotal">₹0</span></div>
+    <div class="pay-sum-row discount"><span>Coupon Discount</span><span id="payDiscount">₹0</span></div>
+    <div class="pay-sum-row"><span>Delivery Fee</span><span id="payDelivery">₹40</span></div>
+    <div class="pay-sum-row"><span>GST (5%)</span><span id="payGST">₹0</span></div>
+    <div class="pay-sum-row total"><span>Total</span><span id="payTotal">₹0</span></div>
+  </div>
+
+  <button class="btn-confirm" id="confirmPayment">
+    <i class="fas fa-check-circle"></i><span>Confirm & Place Order</span>
+  </button>
+</div>
+
+<!-- ── TRACKING MODAL ── -->
+<div class="modal-overlay" id="trackingOverlay"></div>
+<div class="tracking-modal" id="trackingModal">
+  <button class="modal-close-btn" id="closeTracking"><i class="fas fa-times"></i></button>
+  <h2>Order Tracking</h2>
+  <div class="tracking-info" id="trackingInfo"></div>
+</div>
+
+<!-- ── ORDER SUCCESS ── -->
+<div class="order-success" id="orderSuccess">
+  <div class="success-circle">✅</div>
+  <div class="success-title">Order Placed!</div>
+  <div class="success-id">Order #BLZ000000</div>
+  <button class="btn-success-track" id="successTrackBtn">Track Order</button>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Write review toggle
+  document.getElementById('writeReviewToggle')?.addEventListener('click',()=>{
+    const form=document.getElementById('writeReviewForm');
+    form.style.display=form.style.display==='none'?'block':'none';
+  });
+  // Register tab: show pre-otp first
+  document.querySelectorAll('.auth-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      if(tab.dataset.tab==='register'){
+        document.getElementById('registerPreOtp').style.display='flex';
+        document.getElementById('registerForm').style.display='none';
+        document.getElementById('otpSection').style.display='none';
+        document.getElementById('loginForm').classList.remove('active');
+      } else {
+        document.getElementById('registerPreOtp').style.display='none';
+        document.getElementById('registerForm').style.display='none';
+        document.getElementById('otpSection').style.display='none';
+      }
+    });
+  });
+  // Particle effect in auth modal
+  function spawnParticles(){
+    const container=document.getElementById('authParticles');
+  }

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Blaze Kitchen</title>
+  <link rel="stylesheet" href="css/checkout.css?v=2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="co-nav">
+  <a href="index.html" class="co-nav-logo">
+    <svg viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cflame" x1="20" y1="48" x2="20" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#FF2200"/>
+          <stop offset="45%" stop-color="#FF5E00"/>
+          <stop offset="100%" stop-color="#FFD000"/>
+        </linearGradient>
+      </defs>
+      <path d="M20 2 C20 2 30 12 30 22 C30 34 24 40 20 44 C16 40 10 34 10 22 C10 12 20 2 20 2Z" fill="url(#cflame)"/>
+      <ellipse cx="20" cy="30" rx="4" ry="5" fill="#FFE566" opacity="0.7"/>
+    </svg>
+    BLAZE<span>KITCHEN</span>
+  </a>
+
+  <div class="co-nav-steps">
+    <span class="co-step active">Cart</span>
+    <span class="co-step-div">›</span>
+    <span class="co-step active">Checkout</span>
+    <span class="co-step-div">›</span>
+    <span class="co-step" id="stepConfirm">Confirmation</span>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="co-theme-btn" id="themeToggle" title="Toggle theme">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+    <a href="index.html" class="co-nav-back">
+      <i class="fas fa-arrow-left"></i> Back to Menu
+    </a>
+  </div>
+</nav>
+
+<!-- ── MAIN PAGE ── -->
+<main class="co-page" id="coPage">
+
+  <!-- ── LEFT COLUMN ── -->
+  <div class="co-left">
+
+    <!-- 1. DELIVERY ADDRESS -->
+    <div class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-left">
+          <div class="co-step-badge">1</div>
+          <h3>Delivery Address</h3>
+        </div>
+      </div>
+      <div class="co-card-body">
+        <div class="delivery-badge">
+          <i class="fas fa-truck"></i>
+          <span>Estimated delivery: <strong>30 min</strong></span>
+        </div>
+
+        <!-- Address list populated by JS -->
+        <div class="address-list" id="addressList"></div>
+
+        <!-- Add address button -->
+        <button type="button" class="btn-add-addr" id="btnAddAddr">
+          <i class="fas fa-plus"></i> Add New Address
+        </button>
+
+        <!-- Add address form (hidden by default) -->
+        <div class="add-addr-form" id="addAddrForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Label</label>
+              <select id="addrType">
+                <option value="Home">🏠 Home</option>
+                <option value="Work">💼 Work</option>
+                <option value="Other">📍 Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="addrName" placeholder="Full name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Address Line 1</label>
+            <input type="text" id="addrLine1" placeholder="Flat / House no., Building, Street" />
+          </div>
+          <div class="form-group">
+            <label>Address Line 2</label>
+            <input type="text" id="addrLine2" placeholder="Area, Colony (optional)" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" id="addrCity" placeholder="Mysore" value="Mysore" />
+              <span id="cityError" style="display:none;color:#ef4444;font-size:0.78rem;margin-top:4px;">⚠ We currently deliver only in <strong>Mysore / Mysuru</strong>.</span>
+            </div>
+            <div class="form-group">
+              <label>PIN Code</label>
+              <input type="text" id="addrPin" placeholder="570001" maxlength="6" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="addrPhone" placeholder="+91 XXXXX XXXXX" />
+          </div>
+          <div class="addr-form-actions">
+            <button type="button" class="btn-save-addr" id="btnSaveAddr">
+              <i class="fas fa-save"></i> Save Address
+            </button>
+            <button type="button" class="btn-cancel-addr" id="btnCancelAddr">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PAYMENT METHOD -->
+    <div class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-left">
+          <div class="co-step-badge">2</div>
+          <h3>Payment Method</h3>
+        </div>
+      </div>
+      <div class="co-card-body">
+        <div class="pay-methods">
+          <button type="button" class="pay-method active" data-method="upi">
+            <i class="fas fa-mobile-alt"></i><span>UPI</span>
+          </button>
+          <button type="button" class="pay-method" data-method="card">
+            <i class="fas fa-credit-card"></i><span>Card</span>
+          </button>
+          <button type="button" class="pay-method" data-method="wallet">
+            <i class="fas fa-wallet"></i><span>Wallet</span>
+          </button>
+          <button type="button" class="pay-method" data-method="cod">
+            <i class="fas fa-money-bill-wave"></i><span>COD</span>
+          </button>
+        </div>
+
+        <!-- UPI input -->
+        <div id="upiSection">
+          <div class="upi-input-wrap">
+            <input type="text" id="upiId" placeholder="yourname@upi" />
+            <button type="button" class="btn-verify-upi" id="btnVerifyUpi">Verify</button>
+          </div>
+        </div>
+
+        <!-- Card form -->
+        <div class="card-form" id="cardSection">
+          <span class="card-label">Card Number</span>
+          <input class="card-input full" type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" />
+          <span class="card-label">Cardholder Name</span>
+          <input class="card-input full" type="text" id="cardName" placeholder="Name on card" />
+          <div class="card-row">
+            <div>
+              <span class="card-label">Expiry</span>
+              <input class="card-input" type="text" id="cardExp" placeholder="MM / YY" maxlength="7" />
+            </div>
+            <div>
+              <span class="card-label">CVV</span>
+              <input class="card-input" type="password" id="cardCvv" placeholder="•••" maxlength="4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. COUPON -->
+    <div class="co-card" id="couponCard">
+      <div class="co-card-head">
+        <div class="co-card-head-left">
+          <div class="co-step-badge">3</div>
+          <h3>Coupon Code</h3>
+        </div>
+        <span id="couponAppliedBadge" style="display:none;font-size:0.78rem;color:#22c55e;font-weight:600">
+          <i class="fas fa-check-circle"></i> Applied
+        </span>
+      </div>
+      <div class="co-card-body">
+        <div class="coupon-wrap">
+          <input type="text" id="couponInput" placeholder="Enter code e.g. BLAZE50" />
+          <button class="btn-apply" id="btnApplyCoupon">Apply</button>
+        </div>
+        <div class="coupon-chips">
+          <span class="coupon-chip" data-code="WELCOME">🎁 WELCOME</span>
+          <span class="coupon-chip" data-code="BLAZE50">BLAZE50</span>
+          <span class="coupon-chip" data-code="FIRST100">FIRST100</span>
+          <span class="coupon-chip" data-code="MIDNIGHT">MIDNIGHT</span>
+          <span class="coupon-chip" data-code="VIP200">VIP200</span>
+        </div>
+        <div class="coupon-status" id="couponStatus"></div>
+        <button id="btnRemoveCoupon" onclick="removeCoupon()" style="display:none;margin-top:8px;background:none;border:none;color:#ef4444;font-size:0.8rem;padding:0;cursor:pointer;">
+          <i class="fas fa-times-circle"></i> Remove coupon
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. DELIVERY SLOT -->
+    <div class="co-card" id="scheduleCard">
+      <div class="co-card-head">
+        <div class="co-card-head-left">
+          <div class="co-step-badge">4</div>
+          <h3>Delivery Slot</h3>
+        </div>
+      </div>
+      <div class="co-card-body">
+        <div class="slot-options" id="slotOptions">
+          <label class="slot-option active">
+            <input type="radio" name="deliveryMode" value="asap" checked />
+            <span><i class="fas fa-bolt"></i> ASAP (30-40 mins)</span>
+          </label>
+          <label class="slot-option">
+            <input type="radio" name="deliveryMode" value="scheduled" />
+            <span><i class="fas fa-calendar-alt"></i> Schedule Delivery</span>
+          </label>
+        </div>
+        <div class="schedule-picker" id="schedulePicker" style="display:none">
+          <label for="scheduledFor">Select delivery date & time</label>
+          <input type="datetime-local" id="scheduledFor" />
+          <small id="scheduleHint">Choose a time at least 20 minutes from now.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. COOKING INSTRUCTIONS -->
+    <div class="co-card" id="cookingNoteCard">
+      <div class="co-card-head">
+        <div class="co-card-head-left">
+          <div class="co-step-badge">5</div>
+          <h3>Cooking Instructions (Optional)</h3>
+        </div>
+      </div>
+      <div class="co-card-body">
+        <div class="form-group">
+          <label for="cookingNote">Tell us your preference</label>
+          <textarea
+            id="cookingNote"
+            rows="3"
+            maxlength="300"
+            placeholder="Example: Spicy chicken burger but please make it less spicy, no spicy powder."
+          ></textarea>
+          <small id="cookingNoteCount" style="color:var(--text-dim);font-size:.78rem">0 / 300</small>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /co-left -->
+
+  <!-- ── RIGHT COLUMN: ORDER SUMMARY ── -->
+  <div class="summary-card">
+    <div class="summary-head">
+      Order Summary &nbsp;<span id="summaryCount" style="font-size:0.8rem;color:var(--text-dim);font-weight:500"></span>
+    </div>
+    <div class="summary-items" id="summaryItems"></div>
+    <div class="summary-totals">
+      <div class="sum-row"><span>Subtotal</span><span id="sumSubtotal">₹0</span></div>
+      <div class="sum-row" id="sumDiscountRow" style="display:none">
+        <span>Coupon Discount</span><span class="discount-val" id="sumDiscount">−₹0</span>
+      </div>
+      <div class="sum-row"><span id="sumDeliveryLabel">Delivery Fee</span><span id="sumDelivery">₹0</span></div>
+      <div class="sum-row"><span>CGST (2.5%)</span><span id="sumCGST">₹0</span></div>
+      <div class="sum-row"><span>SGST (2.5%)</span><span id="sumSGST">₹0</span></div>
+      <div class="sum-row packaging-row"><span><i class="fas fa-box" style="color:var(--orange);margin-right:5px;font-size:.8rem"></i>Packaging (7%)</span><span id="sumPackaging">₹0</span></div>
+      <div class="sum-row total"><span>Total</span><span id="sumTotal">₹0</span></div>
+    </div>
+    <div class="slide-action slide-action-place" id="btnPlaceOrderSlide" role="button" aria-label="Slide to confirm and place order">
+      <div class="slide-action-track">
+        <span class="slide-action-label">Slide to Confirm Order</span>
+        <button class="slide-action-thumb" type="button" aria-label="Slide to place order">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── SUCCESS OVERLAY ── -->
+<div class="co-success" id="coSuccess">
+  <div class="co-success-icon">🎉</div>
+  <h1>Order Placed!</h1>
+  <p>Thank you for ordering from Blaze Kitchen</p>
+  <div class="co-success-id" id="coOrderId"></div>
+  <p style="color:var(--text-dim);font-size:0.88rem;margin-bottom:28px">
+    Estimated delivery: <strong style="color:var(--text)">30 minutes</strong>
+  </p>
+  <button class="btn-back-home" onclick="window.location.href='orders.html'">
+    <i class="fas fa-receipt"></i> &nbsp;View My Orders
+  </button>
+</div>
+
+<!-- ── TOAST CONTAINER ── -->
+<div class="co-toast-container" id="coToastContainer"></div>
+
+<script src="js/scroll-anim.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@import "@fontsource/inter/400.css";   /* regular */
+@import "@fontsource/inter/500.css";   /* medium */
+@import "@fontsource/inter/600.css";   /* semibold */
+@import "@fontsource/inter/700.css";   /* bold */
+@import "@fontsource/caveat/600.css";
+
+@theme {
+  --font-body: "Inter", sans-serif;
+  --font-accent: "Caveat", sans-serif;
+  --color-beige: #F5F0E4;
+  --color-black: #2c2c2c;
+  --color-brown: #571F01;
+  --color-orange: #FF6B57;
+  --color-blue: #489CD3;
+  --color-yellow: #FDD326;
+  --color-green: #9D9C3D;
+}
+
+@layer base {
+  body {
+    @apply bg-beige text-black font-body text-lg overflow-x-clip;
+  }
+  h2 {
+    @apply font-semibold text-7xl;
+  }
+}
+
+@layer components {
+  .inner-container {
+    @apply px-28;
+  }
+  img {
+    width: 100%;
+  }
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blaze Kitchen — Mood Order</title>
+  <meta name="description" content="Mood-based food recommendations from Blaze Kitchen." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/mood-order.css" />
+</head>
+<body>
+  <header class="mo-header">
+    <a href="index.html" class="mo-brand" aria-label="Back to Blaze Kitchen Home">
+      <span class="mo-brand-fire">🔥</span>
+      <span class="mo-brand-text">BLAZE KITCHEN</span>
+    </a>
+    <div class="mo-header-actions">
+      <button id="viewCartBtn" class="mo-cart-btn" type="button" aria-label="View cart details">
+        <i class="fas fa-cart-shopping"></i>
+        <span>Cart</span>
+        <strong id="cartCountBadge" class="mo-cart-badge">0</strong>
+      </button>
+      <a class="mo-back-link" href="index.html">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Home</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="mo-main">
+    <section class="mo-hero">
+      <p class="mo-eyebrow">Smart Recommendation Engine</p>
+      <h1>Mood-Based Ordering System</h1>
+      <p>Choose your mood and preferences. We will instantly recommend the best matching food items from your live menu data.</p>
+    </section>
+
+    <section class="mo-panel">
+      <div class="mo-panel-head">
+        <h2><i class="fas fa-sliders"></i> Select Mood & Preferences</h2>
+        <p>All suggestions are generated from admin-managed mood mappings.</p>
+      </div>
+
+      <div class="mo-field">
+        <label>Your Mood</label>
+        <div id="moodOptions" class="mo-mood-grid">
+          <button class="mo-chip mo-chip-loading" type="button"><i class="fas fa-spinner fa-spin"></i> Loading moods...</button>
+        </div>
+      </div>
+
+      <div class="mo-form-grid">
+        <div class="mo-field">
+          <label for="foodPreference">Food Preference</label>
+          <select id="foodPreference">
+            <option value="both">Both</option>
+            <option value="veg">Veg</option>
+            <option value="non-veg">Non-Veg</option>
+          </select>
+        </div>
+
+        <div class="mo-field">
+          <label for="healthGoal">Health Goal</label>
+          <select id="healthGoal">
+            <option value="">No specific goal</option>
+            <option value="weight_loss">Weight Loss</option>
+            <option value="weight_gain">Weight Gain</option>
+            <option value="maintain">Maintain</option>
+            <option value="high_protein">High Protein</option>
+          </select>
+        </div>
+
+        <div class="mo-field">
+          <label for="budget">Budget (optional)</label>
+          <div class="mo-budget-wrap">
+            <span>₹</span>
+            <input id="budget" type="number" min="0" step="1" placeholder="e.g. 300" />
+          </div>
+        </div>
+      </div>
+
+      <div class="mo-actions">
+        <button id="getRecommendationsBtn" class="mo-btn mo-btn-primary" type="button">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <span>Get Recommendations</span>
+        </button>
+        <button id="clearFiltersBtn" class="mo-btn mo-btn-ghost" type="button">
+          <i class="fas fa-rotate-left"></i>
+          <span>Reset</span>
+        </button>
+      </div>
+
+      <p id="formHint" class="mo-hint">Select a mood to continue.</p>
+    </section>
+
+    <section class="mo-results-wrap">
+      <div class="mo-results-head">
+        <h2><i class="fas fa-utensils"></i> Recommended For You</h2>
+        <p id="resultMeta">No recommendations yet.</p>
+      </div>
+
+      <div class="mo-cart-strip">
+        <div>
+          <p class="mo-cart-strip-title">Mood Cart</p>
+          <p id="cartSummaryText" class="mo-cart-strip-meta">Your cart is empty.</p>
+        </div>
+        <div class="mo-cart-strip-actions">
+          <button id="clearCartBtn" class="mo-btn mo-btn-ghost" type="button">
+            <i class="fas fa-trash-can"></i>
+            <span>Clear Cart</span>
+          </button>
+          <button id="checkoutBtn" class="mo-btn mo-btn-primary" type="button">
+            <i class="fas fa-credit-card"></i>
+            <span>Checkout</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="gymTracker" class="mo-gym-tracker" style="display:none">
+        <div class="mo-gym-head">
+          <p class="mo-gym-title"><i class="fas fa-dumbbell"></i> Gym Nutrition Tracker</p>
+          <span class="mo-gym-badge">Gym / Fitness</span>
+        </div>
+        <div class="mo-gym-grid">
+          <article class="mo-gym-metric">
+            <p class="mo-gym-label">Total Protein</p>
+            <p id="gymProteinValue" class="mo-gym-value">0<span>g</span></p>
+          </article>
+          <article class="mo-gym-metric">
+            <p class="mo-gym-label">Total Calories</p>
+            <p id="gymCaloriesValue" class="mo-gym-value">0<span>kcal</span></p>
+          </article>
+        </div>
+      </div>
+
+      <div id="loadingState" class="mo-loading" style="display:none">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Finding your best mood matches...</span>
+      </div>
+
+      <div id="emptyState" class="mo-empty">
+        <i class="fas fa-bowl-food"></i>
+        <p>Select mood and click <strong>Get Recommendations</strong>.</p>
+      </div>
+
+      <div id="recommendationGrid" class="mo-results-grid"></div>
+    </section>
+  </main>
+
+  <div id="moodCartOverlay" class="mo-cart-overlay" aria-hidden="true"></div>
+  <aside id="moodCartPanel" class="mo-cart-panel" aria-hidden="true" aria-label="Combined cart panel">
+    <div class="mo-cart-head">
+      <h3><i class="fas fa-basket-shopping"></i> Combined Cart</h3>
+      <button id="closeMoodCartBtn" type="button" class="mo-cart-close" aria-label="Close cart">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <p id="moodCartCountText" class="mo-cart-count">0 items</p>
+
+    <div id="moodCartItems" class="mo-cart-items"></div>
+
+    <div class="mo-cart-totals">
+      <div class="mo-cart-total-row"><span>Subtotal</span><span id="moodCartSubtotal">₹0</span></div>
+      <div class="mo-cart-total-row"><span>GST (5%)</span><span id="moodCartGst">₹0</span></div>
+      <div class="mo-cart-total-row"><span>Packaging (7%)</span><span id="moodCartPackaging">₹0</span></div>
+      <div class="mo-cart-total-row mo-cart-total-grand"><span>Total</span><span id="moodCartGrandTotal">₹0</span></div>
+    </div>
+
+    <button id="moodCartCheckoutBtn" class="mo-btn mo-btn-primary mo-cart-checkout" type="button">
+      <i class="fas fa-credit-card"></i>
+      <span>Proceed to Checkout</span>
+    </button>
+  </aside>
+
+  <script src="js/mood-order.js"></script>
+</body>
+</html>

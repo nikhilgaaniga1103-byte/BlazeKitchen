@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Blaze Kitchen</title>
+  <meta name="description" content="Sign in to Blaze Kitchen and enjoy fire-crafted food delivered fast.">
+  <meta name="theme-color" content="#FF5E00">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--orange:#FF5E00;--orange-dim:rgba(255,94,0,0.16);--glass:rgba(7,7,7,0.74);--glass-border:rgba(255,255,255,0.09);--input-bg:rgba(255,255,255,0.055);--input-border:rgba(255,255,255,0.12);--muted:#8a8a8a}
+    html,body{width:100%;min-height:100%;overflow-x:hidden}
+    body{font-family:'DM Sans',sans-serif;background:#060606}
+
+    /* SCENE */
+    .scene{position:fixed;inset:0;z-index:0}
+    .bg-video{width:100%;height:100%;object-fit:cover;object-position:center}
+    .scene-overlay{
+      position:absolute;inset:0;
+      background:
+        linear-gradient(to bottom,rgba(6,6,6,.86) 0%,rgba(6,6,6,.32) 36%,rgba(6,6,6,.36) 64%,rgba(6,6,6,.9) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%,rgba(255,94,0,.07) 0%,transparent 70%)}
+
+    /* PAGE */
+    .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 16px 40px}
+
+    /* TOP BADGE */
+    .top-badge{position:fixed;top:20px;left:24px;z-index:20;display:flex;align-items:center;gap:9px;text-decoration:none;background:rgba(0,0,0,.52);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:50px;padding:7px 18px 7px 12px;transition:background .2s,border-color .2s}
+    .top-badge:hover{background:rgba(255,94,0,.18);border-color:rgba(255,94,0,.4)}
+    .top-badge-fire{font-size:1.3rem;line-height:1}
+    .top-badge-name{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:#fff;letter-spacing:.12em;line-height:1}
+    .top-badge-name em{color:var(--orange);font-style:normal}
+
+    /* STAT CHIPS */
+    .stats-strip{position:fixed;top:20px;right:24px;z-index:20;display:flex;gap:10px}
+    .stat-chip{background:rgba(0,0,0,.52);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:50px;padding:6px 14px;font-size:.73rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.68)}
+    @media(max-width:520px){.stats-strip{display:none}}
+
+    /* CARD */
+    .card{width:100%;max-width:440px;background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:0 0 0 1px rgba(255,255,255,.03),0 32px 80px rgba(0,0,0,.72),inset 0 0 60px rgba(255,94,0,.04);overflow:hidden;animation:rise .55s cubic-bezier(.22,1,.36,1) both}
+    @keyframes rise{from{opacity:0;transform:translateY(26px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .card::before{content:'';display:block;height:3px;background:linear-gradient(90deg,transparent,var(--orange),#ff9a4d,var(--orange),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    .card-inner{padding:clamp(26px,5vw,42px) clamp(22px,5vw,42px) 34px}
+
+    /* HEADER */
+    .card-header{text-align:center;margin-bottom:26px}
+    .card-icon{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;background:var(--orange-dim);border:1px solid rgba(255,94,0,.28);border-radius:16px;font-size:1.8rem;margin-bottom:14px;animation:pulse-glow 2.5s ease-in-out infinite}
+    @keyframes pulse-glow{0%,100%{box-shadow:0 0 18px rgba(255,94,0,.15)}50%{box-shadow:0 0 40px rgba(255,94,0,.38)}}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.9rem,5vw,2.5rem);color:#fff;letter-spacing:.06em;line-height:1;margin-bottom:6px}
+    .card-title span{color:var(--orange)}
+    .card-sub{font-size:.86rem;color:var(--muted);line-height:1.5}
+
+    /* GOOGLE */
+    .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:rgba(255,255,255,.05);color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s;margin-bottom:18px}
+    .btn-google:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28)}
+
+    /* DIVIDER */
+    .divider{display:flex;align-items:center;gap:10px;margin-bottom:18px;color:rgba(255,255,255,.25);font-size:.7rem;font-family:'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.09)}
+
+    /* FORM */
+    .form-group{position:relative;margin-bottom:16px}
+    .form-group input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:20px 42px 7px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.91rem;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;box-sizing:border-box}
+    .form-group input:focus{border-color:var(--orange);background:rgba(255,94,0,.04);box-shadow:0 0 0 3px rgba(255,94,0,.1)}
+    .form-group input.error{border-color:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,.1)}
+    .form-group label{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.87rem;pointer-events:none;transition:all .17s ease}
+    .form-group input:focus~label,.form-group input:not(:placeholder-shown)~label{top:9px;transform:none;font-size:.63rem;color:var(--orange);letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+    .input-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.83rem;cursor:pointer;padding:4px;transition:color .2s}
+    .input-icon:hover{color:var(--orange)}
+    .field-error{display:none;font-size:.71rem;color:#e74c3c;margin-top:-10px;margin-bottom:6px;padding-left:4px}
+    .field-error.visible{display:block}
+
+    /* REMEMBER + FORGOT ROW */
+    .form-extras{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .remember{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.82rem;color:var(--muted)}
+    .remember input[type=checkbox]{width:15px;height:15px;accent-color:var(--orange);cursor:pointer}
+    .forgot-link{font-size:.82rem;color:var(--orange);text-decoration:none;font-weight:600;transition:opacity .2s}
+    .forgot-link:hover{opacity:.75;text-decoration:underline}
+
+    /* SUBMIT */
+    .btn-signin{width:100%;padding:14px;background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:1.12rem;letter-spacing:.14em;cursor:pointer;transition:background .2s,transform .1s,box-shadow .2s;box-shadow:0 6px 28px rgba(255,94,0,.35);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-signin::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);transform:translateX(-100%);transition:transform .45s ease}
+    .btn-signin:hover::after{transform:translateX(100%)}
+    .btn-signin:hover{background:#e55400;box-shadow:0 8px 38px rgba(255,94,0,.5);transform:translateY(-1px)}
+    .btn-signin:active{transform:translateY(0)}
+    .btn-signin:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-signin .spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+    .btn-signin.loading .btn-text{display:none}
+    .btn-signin.loading .spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* FOOTER */
+    .card-footer{text-align:center;margin-top:18px;font-size:.84rem;color:var(--muted)}
+    .card-footer a{color:var(--orange);text-decoration:none;font-weight:600;transition:opacity .2s}
+    .card-footer a:hover{opacity:.8;text-decoration:underline}
+
+    /* PERKS */
+    .perk-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px;animation:rise .7s .12s cubic-bezier(.22,1,.36,1) both}
+    .perk{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.44);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:50px;padding:6px 14px;font-size:.73rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.62)}
+    .perk i{color:var(--orange);font-size:.68rem}
+
+    /* TAGLINE */
+    .tagline{margin-top:24px;font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,3.5vw,2.6rem);letter-spacing:.14em;color:rgba(255,255,255,.06);text-align:center;pointer-events:none;user-select:none;animation:rise .8s .22s cubic-bezier(.22,1,.36,1) both}
+    .tagline em{color:rgba(255,94,0,.16);font-style:normal}
+
+    /* TOAST */
+    .reg-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:rgba(10,10,10,.95);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--orange);color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;padding:13px 22px;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.6);z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;backdrop-filter:blur(20px)}
+    .reg-toast.show{transform:translateX(-50%) translateY(0)}
+    .reg-toast.error{border-left-color:#e74c3c}
+    .reg-toast.success{border-left-color:#2ecc71}
+
+    @media(max-width:500px){.card{border-radius:20px}}
+  </style>
+</head>
+<body>
+
+<!-- FULL-SCREEN VIDEO -->
+<div class="scene">
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="videos/register video.mp4" type="video/mp4">
+  </video>
+  <div class="scene-overlay"></div>
+</div>
+
+<!-- TOP BRAND -->
+<a href="index.html" class="top-badge">
+  <span class="top-badge-fire">&#x1F525;</span>
+  <span class="top-badge-name">BLAZE <em>KITCHEN</em></span>
+</a>
+
+<div class="stats-strip">
+  <span class="stat-chip">&#x1F525; 120+ Dishes</span>
+  <span class="stat-chip">&#x26A1; 30 Min</span>
+  <span class="stat-chip">&#x2B50; 4.8 Rated</span>
+</div>
+
+<!-- TOAST -->
+<div class="reg-toast" id="loginToast"></div>
+
+<!-- PAGE -->
+<main class="page">
+
+  <div class="card">
+    <div class="card-inner">
+
+      <div class="card-header">
+        <div class="card-icon">&#x1F525;</div>
+        <h1 class="card-title">WELCOME <span>BACK</span></h1>
+        <p class="card-sub">Sign in to your Blaze Kitchen account.</p>
+      </div>
+
+      <!-- Google -->
+      <button class="btn-google" type="button" onclick="handleGoogleLogin()">
+        <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
+          <path d="M17.64 9.20A10.34 10.34 0 0017.52 8H9v2.845h4.844a4.14 4.14 0 01-1.796 2.716v2.258h2.908C16.658 14.252 17.64 11.937 17.64 9.2z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.71H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider">or sign in with email</div>
+
+      <form id="loginForm" novalidate>
+
+        <div class="form-group">
+          <input type="email" id="loginEmail" name="email" placeholder=" " autocomplete="email" required>
+          <label for="loginEmail">Email Address</label>
+          <span class="input-icon"><i class="fas fa-envelope"></i></span>
+          <div class="field-error" id="emailError">Please enter a valid email.</div>
+        </div>
+
+        <div class="form-group">
+          <input type="password" id="loginPassword" name="password" placeholder=" " autocomplete="current-password" required>
+          <label for="loginPassword">Password</label>
+          <span class="input-icon" id="togglePwd" title="Show/hide"><i class="fas fa-eye"></i></span>
+          <div class="field-error" id="pwdError">Please enter your password.</div>
+        </div>
+
+        <div class="form-extras">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe"> Remember me
+          </label>
+          <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-signin" id="signinBtn">
+          <span class="btn-text"><i class="fas fa-fire" style="margin-right:6px"></i>Sign In</span>
+          <div class="spinner"></div>
+        </button>
+
+      </form>
+
+      <p class="card-footer">
+        New here? <a href="register.html">Create a free account</a>
+      </p>
+
+    </div>
+  </div>
+
+  <div class="perk-row">
+    <span class="perk"><i class="fas fa-bolt"></i> 30-min delivery</span>
+    <span class="perk"><i class="fas fa-shield-alt"></i> Secure login</span>
+    <span class="perk"><i class="fas fa-star"></i> 1200+ reviews</span>
+  </div>
+
+  <p class="tagline">FIRE-CRAFTED&nbsp;<em>EXCELLENCE</em></p>
+
+</main>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  // Block if already logged in
+  (function() {
+    try {
+      const u = localStorage.getItem('blaze_user');
+      if (u) { const user = JSON.parse(u); if (user && user.name) { window.location.href = 'index.html'; } }
+    } catch {}
+  })();
+
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('loginToast');
+    t.textContent = msg; t.className = `reg-toast ${type}`; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Password toggle
+  const toggleBtn = document.getElementById('togglePwd');
+  const pwdInput  = document.getElementById('loginPassword');
+  toggleBtn.addEventListener('click', () => {
+    const show = pwdInput.type === 'password';
+    pwdInput.type = show ? 'text' : 'password';
+    toggleBtn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+  });
+
+  // Forgot password
+  document.getElementById('forgotLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) { showToast('Enter your email first', 'error'); return; }
+    showToast('Password reset link sent to ' + email, 'success');
+  });
+
+  let failedLogins = 0;
+  const LOCK_AFTER = 5;
+  const LOCK_DURATION = 5 * 60 * 1000;
+  let lockUntil = parseInt(localStorage.getItem('blaze_lock') || '0');
+
+  function isLocked() { return Date.now() < lockUntil; }
+  function recordFail() {
+    failedLogins++;
+    if (failedLogins >= LOCK_AFTER) {
+      lockUntil = Date.now() + LOCK_DURATION;
+      localStorage.setItem('blaze_lock', lockUntil);
+      showToast('Too many attempts. Locked for 5 minutes.', 'error');
+    } else {
+      showToast('Invalid email or password. ' + (LOCK_AFTER - failedLogins) + ' attempts remaining.', 'error');
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isLocked()) { showToast('Account locked. Try again in 5 minutes.', 'error'); return; }
+
+    const email    = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const emailErr = document.getElementById('emailError');
+    const pwdErr   = document.getElementById('pwdError');
+    let ok = true;
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailErr.classList.add('visible'); document.getElementById('loginEmail').classList.add('error'); ok = false;
+    } else { emailErr.classList.remove('visible'); document.getElementById('loginEmail').classList.remove('error'); }
+
+    if (!password) {
+      pwdErr.classList.add('visible'); pwdInput.classList.add('error'); ok = false;
+    } else { pwdErr.classList.remove('visible'); pwdInput.classList.remove('error'); }
+
+    if (!ok) return;
+
+    const btn = document.getElementById('signinBtn');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    const redirect = new URLSearchParams(window.location.search).get('redirect') || 'index.html';
+
+    try {
+      const res  = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        const user = { ...data.data.user, token: data.token };
+        localStorage.setItem('blaze_user',  JSON.stringify(user));
+        if (data.token) localStorage.setItem('blaze_token', data.token);
+        failedLogins = 0;
+        showToast('Welcome back, ' + (user.name?.split(' ')[0] || 'there') + '! &#x1F44B;', 'success');
+        setTimeout(() => { window.location.href = redirect; }, 1200);
+      } else { recordFail(); btn.classList.remove('loading'); btn.disabled = false; }
+    } catch {
+      // Demo fallback
+      if (email === 'user@blazekitchen.com' && password === 'User@123') {
+        const user = { name:'Demo User', email, role:'user', token:'demo-jwt-token' };
+        localStorage.setItem('blaze_user', JSON.stringify(user));
+        failedLogins = 0;
+        showToast('Welcome, Demo User! &#x1F44B;', 'success');
+        setTimeout(() => { window.location.href = redirect; }, 1200);
+      } else if (email === 'admin@blazekitchen.com' && password === 'Admin@123') {
+        const user = { name:'Admin', email, role:'admin', token:'demo-admin-jwt-token' };
+        localStorage.setItem('blaze_user', JSON.stringify(user));
+        failedLogins = 0;
+        showToast('Welcome, Admin! &#x1F511;', 'success');
+        setTimeout(() => { window.location.href = redirect; }, 1200);
+      } else { recordFail(); btn.classList.remove('loading'); btn.disabled = false; }
+    }
+  });
+
+  function handleGoogleLogin() { showToast('&#x1F6A7; Google sign-in coming soon!', 'info'); }
+</script>
+<script src="js/scroll-anim.js"></script>
+</body>
+</html>

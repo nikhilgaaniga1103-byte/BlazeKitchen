@@ -1,0 +1,1483 @@
+/* ============================================================
+   BLAZE KITCHEN — app.js  v2.0
+   Advanced Frontend: AI Recs, Reviews, Wishlist, PWA,
+   Dark Mode, Live Chat, Counters, Timeline, Testimonials
+   ============================================================ */
+
+'use strict';
+
+const API_BASE = 'http://localhost:5000/api';
+const ITEMS_PER_PAGE = 12;
+
+/* ── USE MONGODB DATA ONLY - NO HARDCODED IMAGES ── */
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=85';
+
+/* ── SUBCATEGORY IMAGE MAP ── */
+const SUBCATEGORY_IMAGES = {
+  'Purely Black':                         'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&q=80',
+  'Classic Milk & Foam':                  'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80',
+  'Cold Brews / Iced Coffee / Frappes':   'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Manual Brew Bar':                      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80',
+  'Affogato':                             'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&q=80',
+  'Matcha':                               'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Hojicha':                              'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Milkshakes & Smoothies':               'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Hot Chocolate':                        'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&q=80',
+  'Speciality Hot Tea Pots':              'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Iced Tea':                             'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Mojitos':                              'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Lemonade':                             'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=80',
+  'Fresh Juices':                         'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Toasts & Platters':                    'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80',
+  'Eggs':                                 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80',
+  'Smoothie Bowls':                       'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Oats Bowls':                           'https://images.unsplash.com/photo-1494597564530-871f2b93ac55?w=600&q=80',
+  'Pancakes':                             'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'French Toast':                         'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Waffles':                              'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'Dinner':                               'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80',
+  'Pasta':                                'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
+  'All-Time Favourites':                  'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80',
+  'Salads':                               'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Soups':                                'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80',
+  'Burgers':                              'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Sandwiches':                           'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+};
+
+/* ── ITEM-SPECIFIC IMAGE MAP ── */
+const ITEM_IMAGES = {
+  // ── Coffee & Brews ──
+  'Espresso':                              'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&q=80',
+  'Espresso Doppio':                       'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&q=80',
+  'Café Americano':                        'https://images.unsplash.com/photo-1582482030567-85b4d6a7a54f?w=600&q=80',
+  'Espresso Sunrise':                      'https://images.unsplash.com/photo-1582482030567-85b4d6a7a54f?w=600&q=80',
+  'Sunrise Americano':                     'https://images.unsplash.com/photo-1582482030567-85b4d6a7a54f?w=600&q=80',
+  'Sparkling Americano':                   'https://images.unsplash.com/photo-1582482030567-85b4d6a7a54f?w=600&q=80',
+  'Macchiato':                             'https://images.unsplash.com/photo-1485808191679-5f86510df711?w=600&q=80',
+  'Espresso Bon Bon':                      'https://images.unsplash.com/photo-1485808191679-5f86510df711?w=600&q=80',
+  'Piccolo (Hot)':                         'https://images.unsplash.com/photo-1585515320310-259814833e62?w=600&q=80',
+  'Cortado (Hot)':                         'https://images.unsplash.com/photo-1585515320310-259814833e62?w=600&q=80',
+  'Cappuccino':                            'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80',
+  'Flat White':                            'https://images.unsplash.com/photo-1585515320310-259814833e62?w=600&q=80',
+  'Orange Mocha':                          'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80',
+  'Winter Latte':                          'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80',
+  'Coffee Lemonade':                       'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Classic Cold Coffee':                   'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=600&q=80',
+  'The Classic Cold Brew':                 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Classic Frappe':                        'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Cold Brew Sangria':                     'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Cold Brew with Tender Coconut':         'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Lemon Honey Cold Brew':                 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Mazagran Cold Brew':                    'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Japanese Iced Pour Over':               'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80',
+  'Pour Over':                             'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80',
+  'French Press':                          'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80',
+  'Affogato al Caffè':                     'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&q=80',
+  // ── Matcha & Hojicha ──
+  'Matcha Latte':                          'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Matchacano':                            'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Mango Matcha Latte':                    'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Matcha Pure Coconut Latte':             'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Banana Milk Matcha Latte':              'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Matcha Frappe':                         'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Soft Girl Matcha Latte':                'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Lemon Pie Matcha':                      'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Matcha Coconut Cloud':                  'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80',
+  'Hojicha Coconut Cloud':                 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  // ── Beverages ──
+  'Nutorious':                             'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Caramel Crunch':                        'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Rocher Road':                           'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Salted Caramel and Brownie':            'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Milky Way':                             'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Berry Blush':                           'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&q=80',
+  'Chocolate Cake Shake':                  'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+  'Mixed Berry Smoothie':                  'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&q=80',
+  'Mango Smoothie':                        'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&q=80',
+  'Green Smoothie':                        'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&q=80',
+  'Hot Chocolate (Regular Style)':         'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&q=80',
+  'Hot Chocolate (Thick Italian Style)':   'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&q=80',
+  'Rose Lemon':                            'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Orange Clove':                          'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Spearmint':                             'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Turmeric':                              'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Hibiscus':                              'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Black Tea':                             'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
+  'Lemon Iced Tea':                        'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Peach Iced Tea':                        'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Cranberry Iced Tea':                    'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Blueberry Iced Tea':                    'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Passion Fruit Iced Tea':                'https://images.unsplash.com/photo-1562547256-2c5ee8cbfd4a?w=600&q=80',
+  'Virgin Mojito':                         'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Blueberry Mojito':                      'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Passion Fruit Mojito':                  'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Peach Mojito':                          'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Cranberry Mojito':                      'https://images.unsplash.com/photo-1609951651556-5334e2706168?w=600&q=80',
+  'Classic Lemonade (Mint & Lemon)':       'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=80',
+  'Watermelon Juice':                      'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Pineapple Juice':                       'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Founders Paradise':                     'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Summer is Back':                        'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Mango Coconut':                         'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Pineapple Coconut':                     'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Cucumber Coconut':                      'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Just Orange':                           'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  'Livestrong (Orange, Beetroot, Carrot, Honey)': 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80',
+  // ── Breakfast Plates ──
+  'Avocado Toast':                         'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80',
+  'Creamy Mushroom Toast':                 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80',
+  'Protein Toast':                         'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80',
+  'Grilled Tomato & Fresh Mozzarella':     'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80',
+  'Scrambled Paneer / Tofu with Toast':    'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80',
+  'Farmhouse Platter':                     'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80',
+  'English Platter':                       'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80',
+  'Classic Scrambled Egg':                 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80',
+  'Cheese Scrambled Egg':                  'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80',
+  'Masala Scrambled Egg':                  'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80',
+  'Fried Eggs':                            'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&q=80',
+  '3 Egg French Fold Omelette (Classic / Cheese / Masala / Mushroom)': 'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&q=80',
+  'Turkish Yogurt & Eggs':                 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80',
+  'Shakshuka':                             'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80',
+  'Tropical Mango & Pineapple':            'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Coconut Pineapple':                     'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Banana Matcha':                         'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Chocolate + Peanut Butter + Banana':    'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Chocolate, Cinnamon & Banana':          'https://images.unsplash.com/photo-1494597564530-871f2b93ac55?w=600&q=80',
+  'Peanut Butter & Banana':               'https://images.unsplash.com/photo-1494597564530-871f2b93ac55?w=600&q=80',
+  'Mixed Fruit':                           'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  // ── Pancakes & Waffles ──
+  'Original Pancake':                      'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'Nutella Banana Pancake':                'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'Fruit Wheel Pancake':                   'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'Triple Chocolate Pancake':              'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'White Chocolate & Seasonal Fruit Pancake': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+  'Original French Toast':                 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Nutella & Banana French Toast':         'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Fruit French Toast':                    'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Matcha French Toast':                   'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Matcha & Mango French Toast':           'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+  'Classic Waffle':                        'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'Triple Chocolate Waffle':               'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'Fruit Waffle':                          'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'Nutella, Banana & Almond Waffle':       'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'Blueberry Cheesecake Waffle':           'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  'White Chocolate & Seasonal Fruit Waffle': 'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&q=80',
+  // ── Mains ──
+  'Thai Curry & Rice':                     'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80',
+  'Makhani & Rice':                        'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80',
+  'Chicken Grill':                         'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80',
+  'Cottage Cheese Grill':                  'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80',
+  'Fish Grill':                            'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80',
+  'Rigatoni / Penne':                      'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
+  'Spaghetti':                             'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
+  'Spaghetti Parmesano Chicken':           'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
+  'Truffle Parmesan Fries':                'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80',
+  'French Fries':                          'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80',
+  'Jalapeño Poppers':                      'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80',
+  'Chicken Wings':                         'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600&q=80',
+  'Chicken Strips':                        'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600&q=80',
+  'Chicken Nuggets':                       'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600&q=80',
+  'Fish & Chips':                          'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80',
+  'Cheesy Garlic Bread':                   'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=600&q=80',
+  'Pull Me Garlic Bun':                    'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=600&q=80',
+  'Korean Cream Cheese Garlic Bun':        'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=600&q=80',
+  'Chicken Quesadilla':                    'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Crispy Sliders Paneer':                 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Crispy Sliders Chicken':                'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Mushroom Stuffed Spinach Tortilla':     'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Paneer Stuffed Spinach Tortilla':       'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Creamy Broccoli Soup with Pita Bread':  'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80',
+  // ── Salads & Soups ──
+  'Pineapple Mint Bowl':                   'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Papaya Bowl':                           'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Mixed Fruits Bowl':                     'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80',
+  'Caesar Salad':                          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Thai Salad':                            'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Waldorf Salad':                         'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Greek Salad':                           'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  'Watermelon Feta':                       'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
+  // ── Burgers & Sandwiches ──
+  'Spicy Chicken Burger':                  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Bang Bang Chicken Burger':              'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Home Style Chicken Burger':             'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Smash Chicken Burger':                  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Chickpea Patty Burger':                 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80',
+  'Cottage Cheese Crispy Burger':          'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80',
+  'Beetroot Patty Burger':                 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80',
+  'Cilantro Lime Chicken Burger':          'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Gochujang Burger':                      'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+  'Egg & Cheese Sandwich':                 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Chicken & Cheese Sandwich':             'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Crispy Chicken Sandwich':               'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Chicken Tikka Sandwich':                'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Caprese Sandwich':                      'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Paneer Tikka Sandwich':                 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  'Pickled Paneer Sandwich':               'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+  "Grandma's Grilled Vegetable Sandwich":  'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80',
+};
+
+const COUPONS = { 'BLAZE50':50, 'FIRST100':100, 'MIDNIGHT':80, 'VIP200':200 };
+const GST_RATE = 0.05;
+const DELIVERY_FEE = 40;
+const FREE_DELIVERY_THRESHOLD = 499;
+
+/* ── MOCK REVIEWS ── */
+const MOCK_REVIEWS = {
+  default: [
+    {name:'Rahul M.',rating:5,text:'Absolutely incredible! The smash burger is the best I\'ve had in Bangalore.',date:'2 days ago'},
+    {name:'Priya S.',rating:4,text:'Super fast delivery, food was hot and fresh. Loving the Korean BBQ Burger!',date:'5 days ago'},
+    {name:'Arjun K.',rating:5,text:'The Molten Lava Cake is life-changing. Will order again.',date:'1 week ago'},
+  ]
+};
+
+/* ── MOCK AI RECOMMENDATIONS ── */
+const AI_RECOMMENDATIONS = [
+  {name:'Truffle Cheese Burger',price:389,image:DEFAULT_IMG,category:'burgers',reason:'Based on your taste'},
+  {name:'Matcha Latte',price:169,image:DEFAULT_IMG,category:'coffee',reason:'Trending now'},
+  {name:'Churros & Dip',price:159,image:DEFAULT_IMG,category:'desserts',reason:'Pairs well with your order'},
+  {name:'Nachos Supreme',price:219,image:DEFAULT_IMG,category:'appetizers',reason:'Crowd favourite'},
+];
+
+/* ── TRENDING ── */
+const TRENDING_ITEMS = [
+  {name:'Korean BBQ Burger',price:319,image:DEFAULT_IMG,category:'burgers'},
+  {name:'Loaded Fries',price:179,image:DEFAULT_IMG,category:'appetizers'},
+  {name:'Molten Lava Cake',price:199,image:DEFAULT_IMG,category:'desserts'},
+  {name:'Blaze Signature Punch',price:159,image:DEFAULT_IMG,category:'beverages'},
+];
+
+/* ── CATEGORY CONFIG ── */
+const CATEGORY_CONFIG = {
+  'burgers': { name: 'Burgers', icon: '🍔', color: '#FF5E00' },
+  'coffee': { name: 'Coffee & Shakes', icon: '☕', color: '#8B4513' },
+  'beverages': { name: 'Beverages', icon: '🥤', color: '#FF6B9D' },
+  'desserts': { name: 'Desserts', icon: '🍰', color: '#FFB6C1' },
+  'appetizers': { name: 'Appetizers', icon: '🍟', color: '#FFA500' },
+  'combos': { name: 'Combos', icon: '🍱', color: '#FF7F50' }
+};
+
+/* ── STATE ── */
+let state = {
+  user: null, cart: [], wishlist: [],
+  allItems: [], filtered: [], currentPage: 0,
+  filter: 'all', search: '', sort: 'default',
+  itemModal: null, itemQty: 1,
+  reviews: {}, recentlyViewed: [], 
+  activeCategory: 'all',
+  addresses: [
+    {id:1,type:'Home',text:'12, Brigade Road, Bangalore - 560001'},
+    {id:2,type:'Work',text:'No 5, MG Road, Bangalore - 560025'},
+  ],
+  selectedAddress: 1,
+  failedLogins: 0, accountLocked: false, lockExpiry: null,
+  pendingOtp: null, otpEmail: null,
+  userRole: 'user',
+};
+
+
+/* ═══════════════════════
+   INIT
+═══════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  setupCursor();
+  setupNavbar();
+  setupHeroSlider();
+  setupEventListeners();
+  setupCategoryCarousel();
+  loadMenu();
+  setupScrollTop();
+  setupThemeToggle();
+  setupPWA();
+  setupScrollReveal();
+  setupCounters();
+  setupTestimonials();
+  setupFAQ();
+  setupLiveChat();
+  setupWhatsApp();
+  renderRecentlyViewed();
+  setupContactForm();
+});
+
+/* ── CUSTOM CURSOR ── */
+function setupCursor() {
+  const cursor = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursorDot');
+  if (!cursor || window.matchMedia('(pointer: coarse)').matches) return;
+  let mouseX=0,mouseY=0,curX=0,curY=0;
+  document.addEventListener('mousemove', e => {
+    mouseX=e.clientX; mouseY=e.clientY;
+    cursorDot.style.left=mouseX+'px'; cursorDot.style.top=mouseY+'px';
+  });
+  (function animateCursor() {
+    curX+=(mouseX-curX)*0.12; curY+=(mouseY-curY)*0.12;
+    cursor.style.left=curX+'px'; cursor.style.top=curY+'px';
+    requestAnimationFrame(animateCursor);
+  })();
+  document.querySelectorAll('button,a,.menu-card,.filter-pill,.payment-method,.coupon-chip,.faq-question,.team-card,.trending-item,.ai-rec-card,.rv-chip').forEach(el => {
+    el.addEventListener('mouseenter',()=>cursor.classList.add('hover-state'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('hover-state'));
+  });
+}
+
+/* ── DARK / LIGHT TOGGLE ── */
+function setupThemeToggle() {
+  const saved = localStorage.getItem('blaze_theme') || 'dark';
+  applyTheme(saved);
+
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('blaze_theme', next);
+  });
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+}
+
+/* ── NAVBAR ── */
+function setupNavbar() {
+  const navbar = document.getElementById('navbar');
+  const toggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+  toggle?.addEventListener('click',()=>{
+    toggle.classList.toggle('open'); mobileNav.classList.toggle('open');
+  });
+}
+function closeMobileMenu() {
+  document.getElementById('menuToggle')?.classList.remove('open');
+  document.getElementById('mobileNav')?.classList.remove('open');
+}
+
+/* ── HERO SLIDER ── */
+function setupHeroSlider() {
+  const slides=document.querySelectorAll('.hero-slide');
+  const dots=document.querySelectorAll('.slider-dot');
+  let current=0;
+  function goTo(idx) {
+    slides[current].classList.remove('active'); dots[current].classList.remove('active');
+    current=(idx+slides.length)%slides.length;
+    slides[current].classList.add('active'); dots[current].classList.add('active');
+  }
+  let timer=setInterval(()=>goTo(current+1),6000);
+  dots.forEach(dot=>dot.addEventListener('click',()=>{
+    clearInterval(timer); goTo(parseInt(dot.dataset.index));
+    timer=setInterval(()=>goTo(current+1),6000);
+  }));
+}
+
+/* ── SCROLL TOP ── */
+function setupScrollTop() {
+  const btn=document.getElementById('scrollTop');
+  window.addEventListener('scroll',()=>btn.classList.toggle('visible',window.scrollY>600),{passive:true});
+  btn?.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+}
+
+/* ── SCROLL REVEAL ── */
+function setupScrollReveal() {
+  const els=document.querySelectorAll('.reveal');
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}
+  }),{threshold:0.1});
+  els.forEach(el=>obs.observe(el));
+}
+
+/* ── COUNTERS ── */
+function setupCounters() {
+  const counters=document.querySelectorAll('.counter-num');
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){
+      animateCounter(e.target); obs.unobserve(e.target);
+    }
+  }),{threshold:0.5});
+  counters.forEach(c=>obs.observe(c));
+}
+function animateCounter(el) {
+  const target=parseInt(el.dataset.target)||0;
+  const suffix=el.dataset.suffix||'';
+  const dur=2000; const step=dur/60;
+  let current=0;
+  const inc=target/60;
+  const timer=setInterval(()=>{
+    current=Math.min(current+inc,target);
+    el.textContent=Math.floor(current).toLocaleString()+suffix;
+    if(current>=target)clearInterval(timer);
+  },step);
+}
+
+/* ── TESTIMONIALS ── */
+function setupTestimonials() {
+  const track=document.getElementById('testimonialsTrack');
+  const dots=document.querySelectorAll('.t-dot');
+  const btns=document.querySelectorAll('.testimonial-btn');
+  let current=0,count=dots.length;
+  if(!track||!count)return;
+  function goto(idx) {
+    current=(idx+count)%count;
+    track.style.transform=`translateX(-${current*100}%)`;
+    dots.forEach((d,i)=>d.classList.toggle('active',i===current));
+  }
+  btns[0]?.addEventListener('click',()=>goto(current-1));
+  btns[1]?.addEventListener('click',()=>goto(current+1));
+  dots.forEach((d,i)=>d.addEventListener('click',()=>goto(i)));
+  setInterval(()=>goto(current+1),5000);
+}
+
+/* ── FAQ ── */
+function setupFAQ() {
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-question')?.addEventListener('click',()=>{
+      const isOpen=item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o=>o.classList.remove('open'));
+      if(!isOpen)item.classList.add('open');
+    });
+  });
+}
+
+/* ── LIVE CHAT ── */
+function setupLiveChat() {
+  const btn=document.getElementById('liveChatBtn');
+  const panel=document.getElementById('chatPanel');
+  const closeBtn=document.getElementById('closeChatBtn');
+  const input=document.getElementById('chatInput');
+  const sendBtn=document.getElementById('sendChatBtn');
+  const messages=document.getElementById('chatMessages');
+  if(!btn||!panel)return;
+
+  btn.addEventListener('click',()=>panel.classList.toggle('open'));
+  closeBtn?.addEventListener('click',()=>panel.classList.remove('open'));
+
+  // Auto greeting
+  setTimeout(()=>addChatMsg('Hi! 👋 Welcome to Blaze Kitchen. How can I help you today?','bot'),800);
+
+  const BOT_REPLIES=['Our delivery time is around 25–30 minutes 🚀','You can use codes BLAZE50 or FIRST100 for discounts!','Our kitchen is open from 11AM–2AM daily 🔥','For live order updates, please check your order tracking.','Sure! Our most popular item is the Classic Smash Burger 🍔'];
+
+  function addChatMsg(text,type) {
+    const msg=document.createElement('div');
+    msg.className=`chat-msg ${type}`;msg.textContent=text;
+    messages.appendChild(msg);messages.scrollTop=messages.scrollHeight;
+  }
+  function sendMsg() {
+    const val=input.value.trim();if(!val)return;
+    addChatMsg(val,'user');input.value='';
+    setTimeout(()=>addChatMsg(BOT_REPLIES[Math.floor(Math.random()*BOT_REPLIES.length)],'bot'),800);
+  }
+  sendBtn?.addEventListener('click',sendMsg);
+  input?.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
+}
+
+/* ── WHATSAPP ── */
+function setupWhatsApp() {
+  document.getElementById('whatsappBtn')?.addEventListener('click',()=>{
+    window.open('https://wa.me/919876543210?text=Hi%20Blaze%20Kitchen!%20I%27d%20like%20to%20place%20an%20order.','_blank');
+  });
+}
+
+/* ── PWA ── */
+let deferredPrompt=null;
+function setupPWA() {
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();deferredPrompt=e;
+    document.getElementById('pwaBanner')?.classList.add('visible');
+  });
+  document.getElementById('pwaInstall')?.addEventListener('click',()=>{
+    deferredPrompt?.prompt();
+    deferredPrompt?.userChoice.then(()=>{
+      deferredPrompt=null;
+      document.getElementById('pwaBanner')?.classList.remove('visible');
+    });
+  });
+  document.getElementById('pwaDismiss')?.addEventListener('click',()=>{
+    document.getElementById('pwaBanner')?.classList.remove('visible');
+  });
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  }
+}
+
+/* ── MENU LOADING (REAL DATA ONLY) ── */
+/* ── MENU JSON (loaded from white_teak_roasters_menu_fixed.json) ── */
+let MENU_DATA = [];
+
+async function loadMenu() {
+  try {
+    console.log('🔥 Loading menu from API...');
+    const res = await fetch(`${API_BASE}/menus`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const apiData = await res.json();
+    
+    const categories = apiData.data || apiData;
+    console.log(`✅ Loaded ${categories.length} categories from API`);
+
+    let allFlatItems = [];
+    let categoryMap = {};
+
+    categories.forEach(categoryDoc => {
+      const mainCategory = categoryDoc.category || 'Menu';
+      const categoryImage = categoryDoc.image || CATEGORY_META[mainCategory]?.img || DEFAULT_IMG;
+      categoryMap[mainCategory] = [];
+
+      if (categoryDoc.subcategories && Array.isArray(categoryDoc.subcategories)) {
+        categoryDoc.subcategories.forEach(subcat => {
+          if (subcat.items && Array.isArray(subcat.items)) {
+            subcat.items.forEach(item => {
+              const flatItem = {
+                _id: item._id || item.id || 'item-' + Math.random(),
+                name: item.name || 'Unknown Item',
+                prices: Array.isArray(item.prices) ? item.prices : [item.price || 0],
+                price: (item.prices && item.prices[0]) || Number(item.price) || 0,
+                description: item.description || item.note || '',
+                image_url: item.image_url || item.image || '',
+                category: mainCategory,
+                categoryImage,
+                subcategory: subcat.name || '',
+                availability: item.availability !== false,
+                badge: item.badge || categoryDoc.badge || '',
+                rating: Number(item.rating) || 0,
+                reviewCount: Number(item.reviewCount) || 0,
+              };
+              
+              const normalized = normalizeItem(flatItem);
+              allFlatItems.push(normalized);
+              categoryMap[mainCategory].push(normalized);
+            });
+          }
+        });
+      }
+    });
+
+    state.allItems = allFlatItems;
+    console.log(`✅ Flattened into ${allFlatItems.length} items across ${categories.length} categories`);
+
+    MENU_DATA = Object.keys(categoryMap).map(cat => ({
+      category: cat,
+      items: categoryMap[cat],
+      image: categoryMap[cat][0]?.categoryImage || CATEGORY_META[cat]?.img || DEFAULT_IMG,
+    }));
+
+    setTimeout(() => {
+      renderCategoryCards();
+      applyFilters();
+    }, 50);
+  } catch (err) {
+    console.error('❌ Menu loading error:', err.message);
+    const grid = document.getElementById('menuGrid');
+    if (grid) grid.innerHTML = `<div class="no-results"><div class="no-results-icon">⚠️</div><p>Could not load menu. Make sure the backend is running at <strong>http://localhost:5000</strong></p></div>`;
+    state.allItems = [];
+    MENU_DATA = [];
+    renderCategoryCards();
+  }
+}
+
+function normalizeItem(item) {
+  const calorieMap = {
+    'coffee & brews': 15, 'just matcha & hojicha': 20, 'beverages': 120,
+    'breakfast plates': 380, 'pancakes & waffles': 420, 'mains': 480,
+    'salads & soups': 180, 'burgers & sandwiches': 550, 'default': 300
+  };
+  const categoryKey = (item.category || 'menu').toLowerCase();
+
+  // Resolve image: item-specific → subcategory → category → default
+  const resolvedImage = item.image_url || item.image
+    || ITEM_IMAGES[item.name]
+    || SUBCATEGORY_IMAGES[item.subcategory]
+    || CATEGORY_META[item.category]?.img
+    || DEFAULT_IMG;
+
+  // Compute display price (lowest of prices array or fallback to price field)
+  const pricesArr = Array.isArray(item.prices) && item.prices.length > 0
+    ? item.prices.map(Number).filter(p => p > 0)
+    : [Number(item.price) || 0];
+  const displayPrice = pricesArr[0] || 0;
+  const priceRange = pricesArr.length > 1
+    ? `₹${Math.min(...pricesArr)}–₹${Math.max(...pricesArr)}`
+    : `₹${displayPrice}`;
+
+  return {
+    ...item,
+    _id: item._id || item.id || 'item-' + Math.random(),
+    name: item.name || 'Unknown Item',
+    category: item.category || 'Menu',
+    price: displayPrice,
+    prices: pricesArr,
+    priceRange,
+    description: item.description || item.note || '',
+    image: resolvedImage,
+    rating: Number(item.rating) || 4.2 + Math.random() * 0.6,
+    reviewCount: Number(item.reviewCount) || Math.floor(Math.random() * 80) + 10,
+    badge: item.badge || '',
+    available: item.available !== false && item.availability !== false,
+    calories: item.calories || calorieMap[categoryKey] || calorieMap.default,
+    subcategory: item.subcategory || '',
+  };
+}
+
+
+
+/* ── RECENTLY VIEWED ── */
+function addToRecentlyViewed(item) {
+  state.recentlyViewed=state.recentlyViewed.filter(i=>i.name!==item.name);
+  state.recentlyViewed.unshift(item);
+  if(state.recentlyViewed.length>6)state.recentlyViewed.pop();
+  renderRecentlyViewed();
+}
+function renderRecentlyViewed() {
+  const scroll=document.getElementById('rvScroll');
+  const section=document.getElementById('rvSection');
+  if(!scroll)return;
+  if(!state.recentlyViewed.length){
+    section?.style&&(section.style.display='none');return;
+  }
+  section?.style&&(section.style.display='block');
+  scroll.innerHTML=state.recentlyViewed.map(item=>`
+    <div class="rv-chip" onclick="openItemModalByName('${item.name}')">
+      <img src="${item.image}" alt="${item.name}" onerror="this.src='${DEFAULT_IMG}'">
+      <span>${item.name}</span>
+    </div>
+  `).join('');
+}
+
+/* ── APPLY FILTERS ── */
+function applyFilters() {
+  let items=[...state.allItems];
+  // Max calories filter
+  const calMax=parseInt(document.getElementById('calFilter')?.value||9999);
+  // Veg only
+  const vegOnly=document.getElementById('advVeg')?.classList.contains('active');
+  if(state.search){
+    const q=state.search.toLowerCase();
+    items=items.filter(i=>i.name.toLowerCase().includes(q)||i.description.toLowerCase().includes(q)||i.category.toLowerCase().includes(q));
+  }
+  if(state.filter!=='all')items=items.filter(i=>i.category===state.filter);
+  if(vegOnly)items=items.filter(i=>i.badge&&i.badge.toLowerCase().includes('veg'));
+  items=items.filter(i=>i.calories<=calMax);
+  if(state.sort==='price-asc')items.sort((a,b)=>a.price-b.price);
+  if(state.sort==='price-desc')items.sort((a,b)=>b.price-a.price);
+  if(state.sort==='name')items.sort((a,b)=>a.name.localeCompare(b.name));
+  if(state.sort==='rating')items.sort((a,b)=>b.rating-a.rating);
+  state.filtered=items; state.currentPage=0; renderMenu(true);
+}
+
+/* ── RENDER MENU ── */
+function renderMenu(reset=false) {
+  const grid=document.getElementById('menuGrid');
+  const count=document.getElementById('resultCount');
+  const loadBtn=document.getElementById('loadMoreBtn');
+  const start=reset?0:state.currentPage*ITEMS_PER_PAGE;
+  const end=(state.currentPage+1)*ITEMS_PER_PAGE;
+  const chunk=state.filtered.slice(start,end);
+  if(reset){grid.innerHTML='';state.currentPage=0;}
+  if(state.filtered.length===0){
+    grid.innerHTML=`<div class="no-results"><div class="no-results-icon">🔍</div><p>No items found for "<strong>${state.search||state.filter}</strong>"</p></div>`;
+    loadBtn.style.display='none';if(count)count.textContent='0 items';return;
+  }
+  chunk.forEach((item,i)=>{
+    const card=createMenuCard(item);
+    card.style.animationDelay=`${i*40}ms`;
+    card.style.animation='cardIn 0.4s ease both';
+    grid.appendChild(card);
+  });
+  if(!document.getElementById('card-anim')){
+    const style=document.createElement('style');
+    style.id='card-anim';
+    style.textContent='@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
+    document.head.appendChild(style);
+  }
+  const shown=Math.min(end,state.filtered.length);
+  if(count)count.textContent=`${state.filtered.length} item${state.filtered.length!==1?'s':''}`;
+  state.currentPage++;
+  loadBtn.style.display=shown<state.filtered.length?'inline-flex':'none';
+}
+
+/* ── CREATE MENU CARD ── */
+function createMenuCard(item) {
+  const card = document.createElement('div');
+  card.className = 'menu-card'; card.dataset.id = item._id || item.id;
+  const img = item.image || DEFAULT_IMG;
+  const badge = item.badge ? `<span class="menu-badge">${item.badge}</span>` : '';
+  const newBadge = !item.badge ? '' : '';
+  const isWished = state.wishlist.some(w => w.name === item.name);
+  const priceDisplay = item.priceRange || `₹${item.price}`;
+  const subcatLabel = item.subcategory ? `<span class="menu-card-subcat">${item.subcategory}</span>` : '';
+  const stars = Math.round(item.rating || 4.5);
+  const starsHtml = '⭐'.repeat(Math.min(stars, 5));
+  const unavailabledClass = !item.available ? ' unavailable' : '';
+
+  card.innerHTML = `
+    <div class="menu-card-img-wrap${unavailabledClass}">
+      <img src="${img}" alt="${item.name}" loading="lazy" onerror="this.src='${DEFAULT_IMG}'">
+      <div class="menu-card-img-overlay"></div>
+      ${badge}
+      <button class="wishlist-heart${isWished ? ' active' : ''}" data-name="${item.name}" aria-label="Wishlist">${isWished ? '❤️' : '🤍'}</button>
+      ${!item.available ? '<div class="sold-out-ribbon">Sold Out</div>' : ''}
+      <button class="quick-view-btn"><i class="fas fa-eye"></i> Quick View</button>
+    </div>
+    <div class="menu-card-body">
+      <div class="menu-card-top-row">
+        <span class="menu-card-category">${item.category}</span>
+        ${subcatLabel}
+      </div>
+      <div class="menu-card-name">${item.name}</div>
+      ${item.description ? `<div class="menu-card-desc">${item.description}</div>` : ''}
+      <div class="menu-card-meta">
+        <span class="rating-mini" title="${(item.rating||4.5).toFixed(1)} stars">⭐ ${(item.rating||4.5).toFixed(1)} <em>(${item.reviewCount||0})</em></span>
+      </div>
+      <div class="menu-card-footer">
+        <div class="menu-card-price">${priceDisplay}</div>
+        <button class="btn-add-cart${!item.available ? ' disabled' : ''}" ${!item.available ? 'disabled' : ''}>
+          <i class="fas fa-plus"></i> ${item.available ? 'Add' : 'Sold Out'}
+        </button>
+      </div>
+    </div>`;
+
+  // Wishlist toggle
+  card.querySelector('.wishlist-heart').addEventListener('click', e => {
+    e.stopPropagation(); toggleWishlist(item);
+    const h = card.querySelector('.wishlist-heart');
+    const wished = state.wishlist.some(w => w.name === item.name);
+    h.classList.toggle('active', wished);
+    h.textContent = wished ? '❤️' : '🤍';
+  });
+  // Quick view
+  card.querySelector('.quick-view-btn').addEventListener('click', e => {
+    e.stopPropagation(); openItemModal(item);
+  });
+  // Add to cart
+  const addBtn = card.querySelector('.btn-add-cart');
+  if (item.available) {
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation(); addToCart(item);
+      addBtn.classList.add('added');
+      addBtn.innerHTML = '<i class="fas fa-check"></i> Added';
+      setTimeout(() => { addBtn.classList.remove('added'); addBtn.innerHTML = '<i class="fas fa-plus"></i> Add'; }, 1800);
+    });
+  }
+  // Card click → modal
+  card.addEventListener('click', () => { openItemModal(item); addToRecentlyViewed(item); });
+  return card;
+}
+
+/* ── ITEM MODAL ── */
+function openItemModal(item) {
+  state.itemModal=item; state.itemQty=1;
+  const isWished=state.wishlist.some(w=>w.name===item.name);
+  document.getElementById('itemModalImg').src=item.image||DEFAULT_IMG;
+  document.getElementById('itemModalImg').alt=item.name;
+  document.getElementById('itemModalBadge').textContent=item.badge||'';
+  document.getElementById('itemModalBadge').style.display=item.badge?'block':'none';
+  document.getElementById('itemModalCat').textContent=item.category;
+  document.getElementById('itemModalName').textContent=item.name;
+  document.getElementById('itemModalDesc').textContent=item.description;
+  document.getElementById('itemModalPrice').textContent=`₹${item.price}`;
+  document.getElementById('itemModalRating').innerHTML=`⭐ ${item.rating?.toFixed(1)||'4.5'} <span>(${item.reviewCount||0} reviews)</span>`;
+  document.getElementById('itemModalCalories').textContent=`🔥 ${item.calories||''} kcal`;
+  document.getElementById('itemModalAdd').innerHTML='<i class="fas fa-bag-shopping"></i> Add to Cart';
+  document.getElementById('itemQtyVal').textContent=1;
+  const wishBtn=document.getElementById('itemModalWishlist');
+  wishBtn.classList.toggle('active',isWished);
+  wishBtn.innerHTML=isWished?'❤️':'🤍';
+
+  // Load reviews
+  renderModalReviews(item);
+  document.getElementById('itemModal').classList.add('open');
+  document.getElementById('itemOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+  addToRecentlyViewed(item);
+}
+function closeItemModal() {
+  document.getElementById('itemModal').classList.remove('open');
+  document.getElementById('itemOverlay').classList.remove('active');
+  document.body.style.overflow=''; state.itemModal=null;
+}
+function openItemModalByName(name) {
+  const item=state.allItems.find(i=>i.name===name);
+  if(item)openItemModal(item);
+}
+
+function renderModalReviews(item) {
+  const container=document.getElementById('itemReviews');
+  if(!container)return;
+  const reviews=state.reviews[item.name]||MOCK_REVIEWS.default;
+  container.innerHTML=reviews.map(r=>`
+    <div class="review-card">
+      <div class="review-top">
+        <div class="reviewer">
+          <div class="reviewer-avatar">${r.name[0]}</div>
+          <div>
+            <div class="reviewer-name">${r.name}</div>
+            <div class="reviewer-date">${r.date}</div>
+          </div>
+        </div>
+        <div class="review-stars">${'⭐'.repeat(r.rating)}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>
+  `).join('');
+}
+
+/* ── WISHLIST ── */
+function toggleWishlist(item) {
+  const idx=state.wishlist.findIndex(w=>w.name===item.name);
+  if(idx>=0){state.wishlist.splice(idx,1);toast(`💔 Removed from wishlist`);}
+  else{state.wishlist.push(item);toast(`❤️ Added to wishlist!`);}
+  saveState(); updateWishlistUI();
+  // Update wishlist btn in modal
+  const wishBtn=document.getElementById('itemModalWishlist');
+  if(wishBtn){
+    const isWished=state.wishlist.some(w=>w.name===item.name);
+    wishBtn.classList.toggle('active',isWished);
+    wishBtn.innerHTML=isWished?'❤️':'🤍';
+  }
+}
+function updateWishlistUI() {
+  const count=state.wishlist.length;
+  const badge=document.getElementById('wishlistCount');
+  if(badge)badge.textContent=count;
+  const body=document.getElementById('wishlistBody');
+  if(!body)return;
+  if(!count){
+    body.innerHTML=`<div class="wishlist-empty"><div class="wishlist-empty-icon">🤍</div><p>Your wishlist is empty</p></div>`;return;
+  }
+  body.innerHTML=state.wishlist.map(item=>`
+    <div class="wishlist-item">
+      <img class="wishlist-item-img" src="${item.image}" alt="${item.name}" onerror="this.src='${DEFAULT_IMG}'">
+      <div class="wishlist-item-info">
+        <div class="wishlist-item-name">${item.name}</div>
+        <div class="wishlist-item-price">₹${item.price}</div>
+        <button class="btn-wl-add" onclick="addToCartByName('${item.name}',${item.price},'${item.category}','${item.image}')">Add to Cart</button>
+      </div>
+      <button class="btn-wl-remove" onclick="removeFromWishlistByName('${item.name}')">✕</button>
+    </div>
+  `).join('');
+}
+function openWishlist(){document.getElementById('wishlistPanel').classList.add('open');document.getElementById('wishlistOverlay').classList.add('active');document.body.style.overflow='hidden';}
+function closeWishlist(){document.getElementById('wishlistPanel').classList.remove('open');document.getElementById('wishlistOverlay').classList.remove('active');document.body.style.overflow='';}
+function removeFromWishlistByName(name){
+  state.wishlist=state.wishlist.filter(w=>w.name!==name);
+  saveState(); updateWishlistUI();
+}
+
+/* ── CART ── */
+function addToCart(item,qty=1) {
+  const existing=state.cart.find(c=>c.name===item.name);
+  if(existing)existing.quantity+=qty;
+  else state.cart.push({id:item._id||item.id||Date.now(),name:item.name,price:item.price,category:item.category,image:item.image||DEFAULT_IMG,quantity:qty});
+  saveState(); updateCartUI(); toast(`🛒 ${item.name} added!`);
+}
+function addToCartByName(name,price,category,image) {
+  addToCart({name,price,category,image});
+}
+function removeFromCart(id){state.cart=state.cart.filter(i=>i.id!=id);saveState();updateCartUI();}
+function updateQty(id,delta){
+  const item=state.cart.find(i=>i.id==id);if(!item)return;
+  item.quantity+=delta;
+  if(item.quantity<=0)removeFromCart(id);else{saveState();updateCartUI();}
+}
+function updateCartUI(){
+  const count=state.cart.reduce((s,i)=>s+i.quantity,0);
+  const badge=document.getElementById('cartCount');
+  badge.textContent=count;
+  if(count>0){badge.classList.remove('bump');void badge.offsetWidth;badge.classList.add('bump');}
+  const body=document.getElementById('cartItems');
+  const footer=document.getElementById('cartFooter');
+  const label=document.getElementById('cartItemLabel');
+  if(label)label.textContent=`${count} item${count!==1?'s':''}`;
+  if(!state.cart.length){
+    body.innerHTML=`<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty</p><button class="btn-browse" onclick="closeCart();document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Browse Menu</button></div>`;
+    footer.style.display='none';return;
+  }
+  body.innerHTML=state.cart.map(item=>`
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.image}" alt="${item.name}" onerror="this.src='${DEFAULT_IMG}'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${item.price} × ${item.quantity} = ₹${item.price*item.quantity}</div>
+      </div>
+      <div class="qty-controls">
+        <button class="qty-btn-sm" onclick="updateQty(${item.id},-1)">−</button>
+        <span class="qty-val">${item.quantity}</span>
+        <button class="qty-btn-sm" onclick="updateQty(${item.id},1)">+</button>
+      </div>
+      <button class="cart-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i></button>
+    </div>`).join('');
+  footer.style.display='block';
+  updateCartSummary();
+}
+function updateCartSummary(){
+  const subtotal=state.cart.reduce((s,i)=>s+i.price*i.quantity,0);
+  const discount=parseInt(localStorage.getItem('blaze_discount')||'0');
+  const delivery=subtotal>=FREE_DELIVERY_THRESHOLD?0:DELIVERY_FEE;
+  const gst=Math.round((subtotal-discount)*GST_RATE);
+  const total=Math.max(0,subtotal-discount+gst+delivery);
+  document.getElementById('subtotal').textContent=`₹${subtotal}`;
+  document.getElementById('total').textContent=`₹${total}`;
+  const discRow=document.getElementById('discountRow');
+  if(discount>0){document.getElementById('discount').textContent=`−₹${discount}`;discRow.style.display='flex';}
+  else discRow.style.display='none';
+}
+function openCart(){document.getElementById('cartPanel').classList.add('open');document.getElementById('cartOverlay').classList.add('active');document.body.style.overflow='hidden';}
+function closeCart(){document.getElementById('cartPanel').classList.remove('open');document.getElementById('cartOverlay').classList.remove('active');document.body.style.overflow='';}
+
+/* ── AUTH ── */
+function openAuthModal(){document.getElementById('authModal').classList.add('open');document.getElementById('authOverlay').classList.add('active');document.body.style.overflow='hidden';}
+function closeAuthModal(){document.getElementById('authModal').classList.remove('open');document.getElementById('authOverlay').classList.remove('active');document.body.style.overflow='';}
+function updateAuthUI(){
+  const btn=document.getElementById('loginBtn');
+  const text=document.getElementById('loginBtnText');
+  if(state.user){
+    text.textContent=state.user.name?.split(' ')[0]||'Account';
+    btn.querySelector('i').className='fas fa-user-check';
+    btn.style.background='#2D7D46';
+  } else {
+    text.textContent='Login';btn.querySelector('i').className='fas fa-user-circle';btn.style.background='';
+  }
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkPasswordStrength(pw) {
+  let score=0;
+  if(pw.length>=6)score++;if(pw.length>=10)score++;
+  if(/[A-Z]/.test(pw))score++;if(/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;
+  return score;
+}
+function updateStrengthBar(pw) {
+  const score=checkPasswordStrength(pw);
+  const segs=document.querySelectorAll('.pw-segment');
+  const label=document.querySelector('.pw-strength-text');
+  segs.forEach((s,i)=>{s.className='pw-segment';if(i<score){s.classList.add(score<=2?'weak':score<=3?'medium':'strong');}});
+  const labels=['','Weak','Weak','Medium','Strong','Very Strong'];
+  if(label)label.textContent=pw?labels[score]:'';
+}
+
+/* ── OTP ── */
+function generateOTP(){return Math.floor(100000+Math.random()*900000).toString();}
+function setupOTPInputs(){
+  const inputs=document.querySelectorAll('.otp-input');
+  inputs.forEach((inp,i)=>{
+    inp.addEventListener('input',()=>{
+      if(inp.value&&i<inputs.length-1)inputs[i+1].focus();
+    });
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus();});
+  });
+}
+
+/* ── ACCOUNT LOCK ── */
+function recordFailedLogin(){
+  state.failedLogins++;
+  if(state.failedLogins>=5){
+    state.accountLocked=true;state.lockExpiry=Date.now()+5*60*1000;
+    toast('Account locked for 5 minutes due to too many failed attempts','error');
+  } else toast(`Invalid credentials. ${5-state.failedLogins} attempts left`,'error');
+}
+function isAccountLocked(){
+  if(!state.accountLocked)return false;
+  if(Date.now()>state.lockExpiry){state.accountLocked=false;state.failedLogins=0;return false;}
+  return true;
+}
+
+/* ── PAYMENT ── */
+function openPaymentModal(){
+  const subtotal=state.cart.reduce((s,i)=>s+i.price*i.quantity,0);
+  const discount=parseInt(localStorage.getItem('blaze_discount')||'0');
+  const delivery=subtotal>=FREE_DELIVERY_THRESHOLD?0:DELIVERY_FEE;
+  const gst=Math.round((subtotal-discount)*GST_RATE);
+  const total=Math.max(0,subtotal-discount+gst+delivery);
+  document.getElementById('paySubtotal').textContent=`₹${subtotal}`;
+  document.getElementById('payDiscount').textContent=discount?`−₹${discount}`:'₹0';
+  document.getElementById('payDelivery').textContent=delivery===0?'FREE':`₹${delivery}`;
+  document.getElementById('payGST').textContent=`₹${gst}`;
+  document.getElementById('payTotal').textContent=`₹${total}`;
+  // Addresses
+  renderAddresses();
+  document.getElementById('paymentModal').classList.add('open');
+  document.getElementById('paymentOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closePaymentModal(){document.getElementById('paymentModal').classList.remove('open');document.getElementById('paymentOverlay').classList.remove('active');document.body.style.overflow='';}
+
+function renderAddresses(){
+  const grid=document.getElementById('addressGrid');
+  if(!grid)return;
+  grid.innerHTML=state.addresses.map(a=>`
+    <div class="address-card ${a.id===state.selectedAddress?'active':''}" onclick="selectAddress(${a.id})">
+      <div class="address-type">${a.type}</div>
+      <div class="address-text">${a.text}</div>
+    </div>
+  `).join('');
+}
+function selectAddress(id){state.selectedAddress=id;renderAddresses();}
+
+/* ── TRACKING ── */
+function openTrackingModal(orderId){
+  const steps=[
+    {icon:'✅',label:'Order Confirmed',time:'Just now',done:true,active:false},
+    {icon:'👨‍🍳',label:'Preparing Your Food',time:'In kitchen now',done:false,active:true},
+    {icon:'🛵',label:'Out for Delivery',time:'In ~25 minutes',done:false,active:false},
+    {icon:'🚪',label:'Delivered',time:'Pending',done:false,active:false},
+  ];
+  document.getElementById('trackingInfo').innerHTML=steps.map(s=>`
+    <div class="tracking-step ${s.done?'done':''} ${s.active?'active':''}">
+      <div class="tracking-icon">${s.icon}</div>
+      <div class="tracking-text"><strong>${s.label}</strong><span>${s.time}</span></div>
+    </div>`).join('')+`<p style="margin-top:20px;font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-muted)">Order ID: <strong style="color:var(--orange)">#${orderId}</strong></p>`;
+  document.getElementById('trackingModal').classList.add('open');
+  document.getElementById('trackingOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeTrackingModal(){document.getElementById('trackingModal').classList.remove('open');document.getElementById('trackingOverlay').classList.remove('active');document.body.style.overflow='';}
+
+/* ── ORDER SUCCESS ── */
+function showOrderSuccess(orderId){
+  const el=document.getElementById('orderSuccess');
+  if(!el)return;
+  el.querySelector('.success-id').textContent=`Order #${orderId}`;
+  el.classList.add('show');
+  setTimeout(()=>{el.classList.remove('show');openTrackingModal(orderId);},3000);
+}
+
+/* ── CONTACT FORM ── */
+function setupContactForm(){
+  document.getElementById('contactForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.target.querySelector('.btn-cf-submit');
+    btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending…';
+    await new Promise(r=>setTimeout(r,1500));
+    btn.innerHTML='<i class="fas fa-check"></i> Sent!';
+    btn.style.background='#2D9B51';
+    toast('Message sent successfully!','success');
+    e.target.reset();
+    setTimeout(()=>{btn.innerHTML='<i class="fas fa-paper-plane"></i> Send Message';btn.style.background='';},3000);
+  });
+}
+
+/* ── EVENT LISTENERS ── */
+function setupEventListeners(){
+  // Nav scroll links
+  document.getElementById('scrollToMenu')?.addEventListener('click',()=>document.getElementById('menu').scrollIntoView({behavior:'smooth'}));
+  document.getElementById('heroOrderBtn')?.addEventListener('click',()=>document.getElementById('menu').scrollIntoView({behavior:'smooth'}));
+
+  // Cart
+  document.getElementById('cartBtn').addEventListener('click',openCart);
+  document.getElementById('closeCart').addEventListener('click',closeCart);
+  document.getElementById('cartOverlay').addEventListener('click',closeCart);
+
+  // Wishlist
+  document.getElementById('wishlistBtn')?.addEventListener('click',openWishlist);
+  document.getElementById('closeWishlist')?.addEventListener('click',closeWishlist);
+  document.getElementById('wishlistOverlay')?.addEventListener('click',closeWishlist);
+
+  // Checkout
+  document.getElementById('checkoutBtn').addEventListener('click',()=>{
+    if(!state.user){closeCart();openAuthModal();toast('Please login to checkout','error');return;}
+    if(!state.cart.length){toast('Your cart is empty','error');return;}
+    closeCart();openPaymentModal();
+  });
+
+  // Login btn
+  document.getElementById('loginBtn').addEventListener('click',()=>{
+    if(state.user){state.user=null;localStorage.removeItem('blaze_user');saveState();updateAuthUI();toast('Logged out');}
+    else openAuthModal();
+  });
+
+  // Auth modal close
+  document.getElementById('closeAuth').addEventListener('click',closeAuthModal);
+  document.getElementById('authOverlay').addEventListener('click',closeAuthModal);
+
+  // Auth tabs
+  document.querySelectorAll('.auth-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab+'Form')?.classList.add('active');
+    });
+  });
+
+  // Password toggles
+  document.querySelectorAll('.toggle-pass').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const input=document.getElementById(btn.dataset.target);
+      input.type=input.type==='password'?'text':'password';
+      btn.querySelector('i').className=input.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+    });
+  });
+
+  // Password strength
+  document.getElementById('regPassword')?.addEventListener('input',e=>updateStrengthBar(e.target.value));
+
+  // OTP inputs
+  setupOTPInputs();
+
+  // Role selector
+  document.querySelectorAll('.role-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');state.userRole=btn.dataset.role;
+    });
+  });
+
+  // Google Auth (mock)
+  document.querySelectorAll('.btn-google-auth').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      toast('Google OAuth requires backend setup. See INTEGRATION.md','info');
+    });
+  });
+
+  // Forgot password
+  document.getElementById('forgotPwLink')?.addEventListener('click',e=>{
+    e.preventDefault();
+    const email=document.getElementById('loginEmail')?.value.trim();
+    if(!email){toast('Enter your email first','error');return;}
+    toast(`Password reset link sent to ${email}`,'success');
+  });
+
+  // Login form
+  document.getElementById('loginForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(isAccountLocked()){toast('Account locked. Try again in 5 minutes','error');return;}
+    const email=document.getElementById('loginEmail').value.trim();
+    const password=document.getElementById('loginPassword').value;
+    const btn=document.getElementById('loginSubmit');
+    btn.disabled=true;btn.innerHTML='<span>Logging in…</span>';
+    try {
+      const res=await fetch(`${API_BASE}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,role:state.userRole})});
+      const data=await res.json();
+      if(data.success){
+        state.user={...data.data.user,token:data.token};state.failedLogins=0;
+        saveState();updateAuthUI();closeAuthModal();
+        document.getElementById('loginForm').reset();
+        toast(`Welcome back, ${data.data.user.name.split(' ')[0]}! 👋`);
+      } else {recordFailedLogin();}
+    } catch {
+      // Demo fallback
+      if(email==='user@blazekitchen.com'&&password==='User@123'){
+        state.user={name:'Demo User',email,role:'user',token:'demo-jwt-token'};
+        state.failedLogins=0;saveState();updateAuthUI();closeAuthModal();
+        document.getElementById('loginForm').reset();
+        toast(`Welcome, Demo User! 👋`,'success');
+      } else if(email==='admin@blazekitchen.com'&&password==='Admin@123'){
+        state.user={name:'Admin',email,role:'admin',token:'demo-admin-jwt-token'};
+        state.failedLogins=0;saveState();updateAuthUI();closeAuthModal();
+        document.getElementById('loginForm').reset();
+        toast(`Welcome, Admin! 🔑`,'success');
+      } else recordFailedLogin();
+    } finally {
+      btn.disabled=false;btn.innerHTML='<span>Login</span><i class="fas fa-arrow-right"></i>';
+    }
+  });
+
+  // OTP verify
+  document.getElementById('verifyOtpBtn')?.addEventListener('click',()=>{
+    const inputs=document.querySelectorAll('.otp-input');
+    const entered=[...inputs].map(i=>i.value).join('');
+    if(entered===state.pendingOtp){
+      toast('Email verified! Please complete registration.','success');
+      document.getElementById('otpSection').style.display='none';
+      document.getElementById('registerForm').style.display='flex';
+    } else toast('Invalid OTP. Please try again','error');
+  });
+
+  // Register form (send OTP)
+  document.getElementById('sendOtpBtn')?.addEventListener('click',async ()=>{
+    const email=document.getElementById('regEmail')?.value.trim();
+    if(!email){toast('Enter your email','error');return;}
+    state.pendingOtp=generateOTP();state.otpEmail=email;
+    toast(`OTP sent to ${email} (Demo: ${state.pendingOtp})`,'info');
+    document.getElementById('registerPreOtp').style.display='none';
+    document.getElementById('otpSection').style.display='block';
+  });
+
+  // Register final
+  document.getElementById('registerForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=document.getElementById('regName').value.trim();
+    const email=document.getElementById('regEmail').value.trim();
+    const password=document.getElementById('regPassword').value;
+    const btn=document.getElementById('registerSubmit');
+    if(!name){toast('Enter your full name','error');return;}
+    if(!email){toast('Enter your email','error');return;}
+    if(password.length<6){toast('Password must be 6+ characters','error');return;}
+    btn.disabled=true;btn.innerHTML='<span>Creating…</span>';
+    try {
+      const res=await fetch(`${API_BASE}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password,role:state.userRole})});
+      if(!res.ok){
+        const data=await res.json();
+        toast(data.message||`Registration failed: ${res.statusText}`,'error');
+        return;
+      }
+      const data=await res.json();
+      if(data.success){
+        state.user={...data.data.user,token:data.token};
+        saveState();updateAuthUI();closeAuthModal();
+        toast(`Welcome to Blaze Kitchen, ${name.split(' ')[0]}! 🔥`,'success');
+      } else toast(data.message||'Registration failed','error');
+    } catch (err) {
+      console.error('Registration error:', err);
+      toast('Failed to connect to server. Make sure backend is running on http://localhost:5000','error');
+    } finally {btn.disabled=false;btn.innerHTML='<span>Create Account</span><i class="fas fa-arrow-right"></i>';}
+  });
+
+  // Item modal
+  document.getElementById('closeItem').addEventListener('click',closeItemModal);
+  document.getElementById('itemOverlay').addEventListener('click',closeItemModal);
+  document.getElementById('itemQtyMinus').addEventListener('click',()=>{
+    if(state.itemQty>1){state.itemQty--;document.getElementById('itemQtyVal').textContent=state.itemQty;}
+  });
+  document.getElementById('itemQtyPlus').addEventListener('click',()=>{
+    state.itemQty++;document.getElementById('itemQtyVal').textContent=state.itemQty;
+  });
+  document.getElementById('itemModalAdd').addEventListener('click',()=>{
+    if(!state.itemModal)return;
+    addToCart(state.itemModal,state.itemQty);
+    const btn=document.getElementById('itemModalAdd');
+    btn.innerHTML='<i class="fas fa-check"></i> Added!';btn.style.background='#2D7D46';
+    setTimeout(()=>{btn.innerHTML='<i class="fas fa-bag-shopping"></i> Add to Cart';btn.style.background='';closeItemModal();},1200);
+  });
+  document.getElementById('itemModalWishlist')?.addEventListener('click',()=>{
+    if(state.itemModal)toggleWishlist(state.itemModal);
+  });
+
+  // Write review (modal)
+  let selectedReviewRating=5;
+  document.querySelectorAll('.star-input span').forEach((star,i)=>{
+    star.addEventListener('click',()=>{
+      selectedReviewRating=i+1;
+      document.querySelectorAll('.star-input span').forEach((s,j)=>s.classList.toggle('active',j<=i));
+    });
+  });
+  document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
+    const text=document.getElementById('reviewText')?.value.trim();
+    if(!text||!state.itemModal){toast('Please write a review','error');return;}
+    if(!state.reviews[state.itemModal.name])state.reviews[state.itemModal.name]=[...MOCK_REVIEWS.default];
+    state.reviews[state.itemModal.name].unshift({name:state.user?.name||'Guest',rating:selectedReviewRating,text,date:'Just now'});
+    renderModalReviews(state.itemModal);document.getElementById('reviewText').value='';
+    toast('Review submitted!','success');
+  });
+
+  // Payment modal
+  document.getElementById('closePayment').addEventListener('click',closePaymentModal);
+  document.getElementById('paymentOverlay').addEventListener('click',closePaymentModal);
+  document.querySelectorAll('.payment-method').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.payment-method').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  document.getElementById('applyCoupon').addEventListener('click',()=>{
+    const code=document.getElementById('couponCode').value.trim().toUpperCase();
+    if(COUPONS[code]){
+      localStorage.setItem('blaze_discount',COUPONS[code]);
+      openPaymentModal();toast(`🎉 Coupon applied! ₹${COUPONS[code]} off`,'success');
+    } else toast('Invalid coupon code','error');
+  });
+  document.getElementById('confirmPayment').addEventListener('click',()=>{
+    const orderId='BLZ'+Math.random().toString(36).substr(2,7).toUpperCase();
+    closePaymentModal();
+    state.cart=[];localStorage.removeItem('blaze_discount');saveState();updateCartUI();closeCart();
+    showOrderSuccess(orderId);
+    toast(`🔥 Order #${orderId} placed!`,'success');
+  });
+  document.getElementById('closeTracking').addEventListener('click',closeTrackingModal);
+  document.getElementById('trackingOverlay').addEventListener('click',closeTrackingModal);
+  document.getElementById('successTrackBtn')?.addEventListener('click',()=>{
+    document.getElementById('orderSuccess').classList.remove('show');
+  });
+
+  // Filters
+  document.querySelectorAll('.filter-pill').forEach(pill=>{
+    pill.addEventListener('click',()=>{
+      document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');state.filter=pill.dataset.category;applyFilters();
+    });
+  });
+  // Advanced filter chips
+  document.querySelectorAll('.adv-filter-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{chip.classList.toggle('active');applyFilters();});
+  });
+  // Calorie slider
+  const calFilter=document.getElementById('calFilter');
+  const calVal=document.getElementById('calVal');
+  calFilter?.addEventListener('input',()=>{calVal.textContent=calFilter.value+' kcal';applyFilters();});
+
+  // Search
+  const searchInput=document.getElementById('searchInput');
+  const clearBtn=document.getElementById('searchClear');
+  searchInput.addEventListener('input',()=>{
+    state.search=searchInput.value.trim().toLowerCase();
+    clearBtn.style.display=state.search?'flex':'none';applyFilters();
+  });
+  clearBtn.addEventListener('click',()=>{searchInput.value='';state.search='';clearBtn.style.display='none';applyFilters();});
+
+  // Sort
+  document.getElementById('sortSelect').addEventListener('change',e=>{state.sort=e.target.value;applyFilters();});
+
+  // Load more
+  document.getElementById('loadMoreBtn').addEventListener('click',()=>renderMenu(false));
+
+  // ESC key
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){closeItemModal();closeAuthModal();closePaymentModal();closeTrackingModal();closeCart();closeWishlist();}
+  });
+}
+
+/* ── STATE PERSISTENCE ── */
+function loadState(){
+  try {
+    const user=localStorage.getItem('blaze_user');
+    const cart=localStorage.getItem('blaze_cart');
+    const wishlist=localStorage.getItem('blaze_wishlist');
+    const rv=localStorage.getItem('blaze_rv');
+    if(user)state.user=JSON.parse(user);
+    if(cart)state.cart=JSON.parse(cart);
+    if(wishlist)state.wishlist=JSON.parse(wishlist);
+    if(rv)state.recentlyViewed=JSON.parse(rv);
+  } catch {}
+  updateAuthUI();updateCartUI();updateWishlistUI();
+}
+function saveState(){
+  if(state.user)localStorage.setItem('blaze_user',JSON.stringify(state.user));
+  else localStorage.removeItem('blaze_user');
+  localStorage.setItem('blaze_cart',JSON.stringify(state.cart));
+  localStorage.setItem('blaze_wishlist',JSON.stringify(state.wishlist));
+  localStorage.setItem('blaze_rv',JSON.stringify(state.recentlyViewed));
+}
+
+/* ── TOAST ── */
+function toast(message,type='default'){
+  const container=document.getElementById('toastContainer');
+  const icons={success:'✅',error:'❌',info:'ℹ️',default:'🔥'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span class="toast-icon">${icons[type]||icons.default}</span><span class="toast-text">${message}</span>`;
+  container.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),300);},3200);
+}
+
+/* ── CATEGORY CAROUSEL NAVIGATION ── */
+function setupCategoryCarousel(){
+  const carousel=document.getElementById('categoryCarousel');
+  const leftBtn=document.getElementById('categoryScrollLeft');
+  const rightBtn=document.getElementById('categoryScrollRight');
+
+  if(!carousel)return;
+
+  // Populate categories dynamically
+  renderCategoryTabs();
+
+  const scrollAmount=320;
+
+  leftBtn?.addEventListener('click',()=>{
+    carousel.scrollBy({left:-scrollAmount,behavior:'smooth'});
+  });
+
+  rightBtn?.addEventListener('click',()=>{
+    carousel.scrollBy({left:scrollAmount,behavior:'smooth'});
+  });
+
+  // Touch scroll support
+  let isDown=false;let startX;let scrollLeft;
+  carousel.addEventListener('mousedown',(e)=>{isDown=true;startX=e.pageX-carousel.offsetLeft;scrollLeft=carousel.scrollLeft;});
+  carousel.addEventListener('mouseleave',()=>{isDown=false;});
+  carousel.addEventListener('mouseup',()=>{isDown=false;});
+  carousel.addEventListener('mousemove',(e)=>{
+    if(!isDown)return;e.preventDefault();const x=e.pageX-carousel.offsetLeft;const walk=(x-startX)*1;carousel.scrollLeft=scrollLeft-walk;
+  });
+}
+
+/* ── RENDER CATEGORY TABS (FROM REAL DATA) ── */
+/* Category icons & images mapping */
+const CATEGORY_META = {
+  'Coffee & Brews':        { icon: '☕', img: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&q=80' },
+  'Just Matcha & Hojicha': { icon: '🍵', img: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&q=80' },
+  'Beverages':             { icon: '🥤', img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80' },
+  'Breakfast Plates':      { icon: '🍳', img: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80' },
+  'Pancakes & Waffles':    { icon: '🥞', img: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80' },
+  'Mains':                 { icon: '🍝', img: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&q=80' },
+  'Salads & Soups':        { icon: '🥗', img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80' },
+  'Burgers & Sandwiches':  { icon: '🍔', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80' },
+};
+
+function renderCategoryTabs() {
+  renderCategoryCards();
+}
+
+function renderCategoryCards() {
+  const carousel = document.getElementById('categoryCarousel');
+  if (!carousel) return;
+  carousel.innerHTML = '';
+
+  // ── ALL ITEMS button ──
+  const allBtn = document.createElement('div');
+  allBtn.className = 'category-item active';
+  allBtn.dataset.category = 'all';
+  allBtn.innerHTML = `
+    <div class="cat-img-wrap">
+      <span class="cat-all-icon">🍽️</span>
+    </div>
+    <div class="cat-label">All Items</div>
+    <div class="cat-count">${state.allItems.length} items</div>`;
+  allBtn.addEventListener('click', () => {
+    document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+    allBtn.classList.add('active');
+    filterByCategory('all');
+  });
+  carousel.appendChild(allBtn);
+
+  if (!MENU_DATA || !MENU_DATA.length) return;
+
+  MENU_DATA.forEach(cat => {
+    const meta = CATEGORY_META[cat.category] || {};
+    const icon = meta.icon || '🍽️';
+    const img = cat.image || meta.img || DEFAULT_IMG;
+    const totalItems = cat.items?.length || 0;
+
+    const btn = document.createElement('div');
+    btn.className = 'category-item';
+    btn.dataset.category = cat.category;
+    btn.innerHTML = `
+      <div class="cat-img-wrap">
+        <img src="${img}" alt="${cat.category}" loading="lazy" onerror="this.src='${DEFAULT_IMG}'">
+        <span class="cat-icon-badge">${icon}</span>
+      </div>
+      <div class="cat-label">${cat.category}</div>
+      <div class="cat-count">${totalItems} items</div>`;
+
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+      btn.classList.add('active');
+      filterByCategory(cat.category);
+    });
+    carousel.appendChild(btn);
+  });
+}
+
+/* ── FILTER BY CATEGORY ── */
+function filterByCategory(categoryKey) {
+  state.activeCategory = categoryKey;
+  state.filter = categoryKey === 'all' ? 'all' : categoryKey;
+  applyFilters();
+  // Smooth scroll to menu grid
+  const menuSection = document.querySelector('.menu-section');
+  if (menuSection) menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+
+
+// Global expose
+window.quickAdd=(n,p,c,i)=>addToCart({name:n,price:p,category:c,image:i});
+window.addToCartByName=addToCartByName;
+window.removeFromCart=removeFromCart;
+window.updateQty=updateQty;
+window.openWishlist=openWishlist;
+window.closeWishlist=closeWishlist;
+window.removeFromWishlistByName=removeFromWishlistByName;
+window.closeMobileMenu=closeMobileMenu;
+window.selectAddress=selectAddress;
+window.openItemModalByName=openItemModalByName;
+window.filterByCategory=filterByCategory;
+
+console.log('🔥 Blaze Kitchen v2.0 — Startup Grade');

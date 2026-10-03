@@ -1,0 +1,385 @@
+﻿{
+  "success": true,
+  "count": 8,
+  "data": [
+    {
+      "image": "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&q=80","badge": "","availability": true,"_id": "699ff4cbdd98af62d91f0199",
+      "category": "Coffee & Brews",
+      "subcategories": [
+        {
+          "name": "Purely Black",
+          "items": [
+            { "name": "Espresso", "prices": [170], "image_url": "" },
+            { "name": "Espresso Doppio", "prices": [180], "image_url": "" },
+            { "name": "Café Americano", "prices": [200], "image_url": "" },
+            { "name": "Espresso Sunrise", "prices": [220], "image_url": "" },
+            { "name": "Sunrise Americano", "prices": [230], "image_url": "" },
+            { "name": "Sparkling Americano", "prices": [230], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Classic Milk & Foam",
+          "items": [
+            { "name": "Macchiato", "prices": [190], "image_url": "" },
+            { "name": "Espresso Bon Bon", "prices": [190], "image_url": "" },
+            { "name": "Piccolo (Hot)", "prices": [200], "image_url": "" },
+            { "name": "Cortado (Hot)", "prices": [200], "image_url": "" },
+            { "name": "Cappuccino", "prices": [220], "image_url": "" },
+            { "name": "Flat White", "prices": [230], "image_url": "" },
+            { "name": "Orange Mocha", "prices": [300], "image_url": "" },
+            { "name": "Winter Latte", "prices": [300], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Cold Brews / Iced Coffee / Frappes",
+          "items": [
+            { "name": "Coffee Lemonade", "prices": [220], "image_url": "" },
+            { "name": "Classic Cold Coffee", "prices": [230], "image_url": "" },
+            { "name": "The Classic Cold Brew", "prices": [230], "image_url": "" },
+            { "name": "Classic Frappe", "prices": [250], "image_url": "" },
+            { "name": "Cold Brew Sangria", "prices": [250], "image_url": "" },
+            { "name": "Cold Brew with Tender Coconut", "prices": [250], "image_url": "" },
+            { "name": "Lemon Honey Cold Brew", "prices": [250], "image_url": "" },
+            { "name": "Mazagran Cold Brew", "prices": [250], "image_url": "" },
+            { "name": "Japanese Iced Pour Over", "prices": [250], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Manual Brew Bar",
+          "items": [
+            { "name": "Pour Over", "prices": [200], "image_url": "" },
+            { "name": "French Press", "prices": [200], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Affogato",
+          "items": [
+            { "name": "Affogato al Caffè", "prices": [299], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019a",
+      "category": "Just Matcha & Hojicha",
+      "subcategories": [
+        {
+          "name": "Matcha",
+          "items": [
+            { "name": "Matcha Latte", "prices": [320], "image_url": "" },
+            { "name": "Matchacano", "prices": [300], "image_url": "" },
+            { "name": "Mango Matcha Latte", "prices": [350], "image_url": "" },
+            { "name": "Matcha Pure Coconut Latte", "prices": [300], "image_url": "" },
+            { "name": "Banana Milk Matcha Latte", "prices": [300], "image_url": "" },
+            { "name": "Matcha Frappe", "prices": [350], "image_url": "" },
+            { "name": "Soft Girl Matcha Latte", "prices": [350], "image_url": "" },
+            { "name": "Lemon Pie Matcha", "prices": [350], "image_url": "" },
+            { "name": "Matcha Coconut Cloud", "prices": [320], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Hojicha",
+          "items": [
+            { "name": "Hojicha Coconut Cloud", "prices": [320], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019b",
+      "category": "Beverages",
+      "subcategories": [
+        {
+          "name": "Milkshakes & Smoothies",
+          "items": [
+            { "name": "Nutorious", "prices": [289], "image_url": "" },
+            { "name": "Caramel Crunch", "prices": [289], "image_url": "" },
+            { "name": "Rocher Road", "prices": [299], "image_url": "" },
+            { "name": "Salted Caramel and Brownie", "prices": [299], "image_url": "" },
+            { "name": "Milky Way", "prices": [299], "image_url": "" },
+            { "name": "Berry Blush", "prices": [299], "image_url": "" },
+            { "name": "Chocolate Cake Shake", "prices": [299], "image_url": "" },
+            { "name": "Mixed Berry Smoothie", "prices": [359], "image_url": "" },
+            { "name": "Mango Smoothie", "prices": [329], "image_url": "" },
+            { "name": "Green Smoothie", "prices": [329], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Hot Chocolate",
+          "items": [
+            { "name": "Hot Chocolate (Regular Style)", "prices": [375], "image_url": "" },
+            { "name": "Hot Chocolate (Thick Italian Style)", "prices": [400], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Speciality Hot Tea Pots",
+          "items": [
+            { "name": "Rose Lemon", "prices": [220], "image_url": "" },
+            { "name": "Orange Clove", "prices": [220], "image_url": "" },
+            { "name": "Spearmint", "prices": [220], "image_url": "" },
+            { "name": "Turmeric", "prices": [220], "image_url": "" },
+            { "name": "Hibiscus", "prices": [220], "image_url": "" },
+            { "name": "Black Tea", "prices": [220], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Iced Tea",
+          "items": [
+            { "name": "Lemon Iced Tea", "prices": [220], "image_url": "" },
+            { "name": "Peach Iced Tea", "prices": [220], "image_url": "" },
+            { "name": "Cranberry Iced Tea", "prices": [220], "image_url": "" },
+            { "name": "Blueberry Iced Tea", "prices": [220], "image_url": "" },
+            { "name": "Passion Fruit Iced Tea", "prices": [220], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Mojitos",
+          "items": [
+            { "name": "Virgin Mojito", "prices": [240], "image_url": "" },
+            { "name": "Blueberry Mojito", "prices": [240], "image_url": "" },
+            { "name": "Passion Fruit Mojito", "prices": [240], "image_url": "" },
+            { "name": "Peach Mojito", "prices": [240], "image_url": "" },
+            { "name": "Cranberry Mojito", "prices": [240], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Lemonade",
+          "items": [
+            { "name": "Classic Lemonade (Mint & Lemon)", "prices": [200], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Fresh Juices",
+          "items": [
+            { "name": "Livestrong (Orange, Beetroot, Carrot, Honey)", "prices": [250], "image_url": "" },
+            { "name": "Pineapple Juice", "prices": [250], "image_url": "" },
+            { "name": "Founders Paradise", "prices": [250], "image_url": "" },
+            { "name": "Summer is Back", "prices": [250], "image_url": "" },
+            { "name": "Watermelon Juice", "prices": [250], "image_url": "" },
+            { "name": "Mango Coconut", "prices": [250], "image_url": "" },
+            { "name": "Pineapple Coconut", "prices": [250], "image_url": "" },
+            { "name": "Cucumber Coconut", "prices": [250], "image_url": "" },
+            { "name": "Just Orange", "prices": [250], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019c",
+      "category": "Breakfast Plates",
+      "subcategories": [
+        {
+          "name": "Toasts & Platters",
+          "items": [
+            { "name": "Avocado Toast", "prices": [350, 375], "image_url": "", "note": "Two size options" },
+            { "name": "Creamy Mushroom Toast", "prices": [280, 300], "image_url": "", "note": "Two size options" },
+            { "name": "Protein Toast", "prices": [280], "image_url": "" },
+            { "name": "Grilled Tomato & Fresh Mozzarella", "prices": [299], "image_url": "" },
+            { "name": "Scrambled Paneer / Tofu with Toast", "prices": [299], "image_url": "" },
+            { "name": "Farmhouse Platter", "prices": [500], "image_url": "" },
+            { "name": "English Platter", "prices": [500], "image_url": "" },
+            { "name": "Extras: Eggs / Paneer / Tofu / Toast", "prices": [30, 50, 50, 20], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Eggs",
+          "items": [
+            { "name": "Classic Scrambled Egg", "prices": [259], "image_url": "" },
+            { "name": "Cheese Scrambled Egg", "prices": [269], "image_url": "" },
+            { "name": "Masala Scrambled Egg", "prices": [269], "image_url": "" },
+            { "name": "Fried Eggs", "prices": [269], "image_url": "" },
+            { "name": "3 Egg French Fold Omelette (Classic / Cheese / Masala / Mushroom)", "prices": [299, 329], "image_url": "" },
+            { "name": "Turkish Yogurt & Eggs", "prices": [299], "image_url": "" },
+            { "name": "Shakshuka", "prices": [299], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Smoothie Bowls",
+          "items": [
+            { "name": "Tropical Mango & Pineapple", "prices": [299], "image_url": "" },
+            { "name": "Coconut Pineapple", "prices": [299], "image_url": "" },
+            { "name": "Banana Matcha", "prices": [299], "image_url": "" },
+            { "name": "Chocolate + Peanut Butter + Banana", "prices": [299], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Oats Bowls",
+          "items": [
+            { "name": "Chocolate, Cinnamon & Banana", "prices": [200], "image_url": "" },
+            { "name": "Peanut Butter & Banana", "prices": [200], "image_url": "" },
+            { "name": "Mango Coconut", "prices": [200], "image_url": "" },
+            { "name": "Mixed Fruit", "prices": [200], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019d",
+      "category": "Pancakes & Waffles",
+      "subcategories": [
+        {
+          "name": "Pancakes",
+          "items": [
+            { "name": "Original Pancake", "prices": [299], "image_url": "" },
+            { "name": "Nutella Banana Pancake", "prices": [299], "image_url": "" },
+            { "name": "Fruit Wheel Pancake", "prices": [299], "image_url": "" },
+            { "name": "Triple Chocolate Pancake", "prices": [299], "image_url": "" },
+            { "name": "White Chocolate & Seasonal Fruit Pancake", "prices": [320], "image_url": "" }
+          ]
+        },
+        {
+          "name": "French Toast",
+          "items": [
+            { "name": "Original French Toast", "prices": [299], "image_url": "" },
+            { "name": "Nutella & Banana French Toast", "prices": [320], "image_url": "" },
+            { "name": "Fruit French Toast", "prices": [320], "image_url": "" },
+            { "name": "Matcha French Toast", "prices": [320], "image_url": "" },
+            { "name": "Matcha & Mango French Toast", "prices": [320], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Waffles",
+          "items": [
+            { "name": "Classic Waffle", "prices": [289], "image_url": "" },
+            { "name": "Triple Chocolate Waffle", "prices": [299], "image_url": "" },
+            { "name": "Fruit Waffle", "prices": [299], "image_url": "" },
+            { "name": "Nutella, Banana & Almond Waffle", "prices": [299], "image_url": "" },
+            { "name": "Blueberry Cheesecake Waffle", "prices": [299], "image_url": "" },
+            { "name": "White Chocolate & Seasonal Fruit Waffle", "prices": [320], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019e",
+      "category": "Mains",
+      "subcategories": [
+        {
+          "name": "Dinner",
+          "items": [
+            { "name": "Thai Curry & Rice", "prices": [300, 320, 340], "image_url": "", "note": "Tofu / Paneer / Chicken" },
+            { "name": "Makhani & Rice", "prices": [300, 320, 340], "image_url": "", "note": "Tofu / Paneer / Chicken" },
+            { "name": "Chicken Grill", "prices": [350], "image_url": "" },
+            { "name": "Cottage Cheese Grill", "prices": [350], "image_url": "" },
+            { "name": "Fish Grill", "prices": [400], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Pasta",
+          "items": [
+            { "name": "Rigatoni / Penne", "prices": [300, 340], "image_url": "", "note": "Veg / Non-veg" },
+            { "name": "Spaghetti", "prices": [300, 340], "image_url": "", "note": "Veg / Non-veg" },
+            { "name": "Spaghetti Parmesano Chicken", "prices": [350], "image_url": "" },
+            { "name": "Extras: Veggies / Chicken / Garlic Bread", "prices": [50, 100, 30], "image_url": "" }
+          ]
+        },
+        {
+          "name": "All-Time Favourites",
+          "items": [
+            { "name": "Truffle Parmesan Fries", "prices": [450], "image_url": "" },
+            { "name": "French Fries", "prices": [299], "image_url": "" },
+            { "name": "Mexican Half n Half", "prices": [299], "image_url": "" },
+            { "name": "Pull Me Garlic Bun", "prices": [299], "image_url": "" },
+            { "name": "Korean Cream Cheese Garlic Bun", "prices": [299], "image_url": "" },
+            { "name": "Chicken Strips", "prices": [299], "image_url": "" },
+            { "name": "Chicken Wings", "prices": [299], "image_url": "" },
+            { "name": "Jalapeño Poppers", "prices": [299], "image_url": "" },
+            { "name": "Plain Garlic Bread", "prices": [240], "image_url": "" },
+            { "name": "Cheesy Garlic Bread", "prices": [279], "image_url": "" },
+            { "name": "Angry Cheese Garlic Bread", "prices": [299], "image_url": "" },
+            { "name": "Angry Mushroom & Cheese Garlic Bread", "prices": [349], "image_url": "" },
+            { "name": "Cheesy Potato Poppers", "prices": [299], "image_url": "" },
+            { "name": "Hash Browns", "prices": [299], "image_url": "" },
+            { "name": "Chicken Nuggets", "prices": [299], "image_url": "" },
+            { "name": "Fish & Chips", "prices": [400], "image_url": "" },
+            { "name": "Chicken Quesadilla", "prices": [299], "image_url": "" },
+            { "name": "Crispy Sliders Paneer", "prices": [469], "image_url": "" },
+            { "name": "Crispy Sliders Chicken", "prices": [499], "image_url": "" },
+            { "name": "Mushroom Stuffed Spinach Tortilla", "prices": [349], "image_url": "" },
+            { "name": "Paneer Stuffed Spinach Tortilla", "prices": [349], "image_url": "" },
+            { "name": "Creamy Broccoli Soup with Pita Bread", "prices": [300], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f019f",
+      "category": "Salads & Soups",
+      "subcategories": [
+        {
+          "name": "Salads",
+          "items": [
+            { "name": "Pineapple Mint Bowl", "prices": [200], "image_url": "" },
+            { "name": "Papaya Bowl", "prices": [200], "image_url": "" },
+            { "name": "Mixed Fruits Bowl", "prices": [200], "image_url": "" },
+            { "name": "Caesar Salad", "prices": [279, 299], "image_url": "", "note": "Two size options" },
+            { "name": "Thai Salad", "prices": [279, 299], "image_url": "", "note": "Two size options" },
+            { "name": "Waldorf Salad", "prices": [299], "image_url": "" },
+            { "name": "Greek Salad", "prices": [299], "image_url": "" },
+            { "name": "Watermelon Feta", "prices": [299], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Soups",
+          "items": [
+            { "name": "Creamy Broccoli Soup with Pita Bread", "prices": [300], "image_url": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+      "badge": "",
+      "availability": true,
+      "_id": "699ff4cbdd98af62d91f01a0",
+      "category": "Burgers & Sandwiches",
+      "subcategories": [
+        {
+          "name": "Burgers",
+          "items": [
+            { "name": "Spicy Chicken Burger", "prices": [349], "image_url": "" },
+            { "name": "Bang Bang Chicken Burger", "prices": [349], "image_url": "" },
+            { "name": "Home Style Chicken Burger", "prices": [349], "image_url": "" },
+            { "name": "Smash Chicken Burger", "prices": [349], "image_url": "" },
+            { "name": "Chickpea Patty Burger", "prices": [349], "image_url": "" },
+            { "name": "Cottage Cheese Crispy Burger", "prices": [349], "image_url": "" },
+            { "name": "Beetroot Patty Burger", "prices": [349], "image_url": "" },
+            { "name": "Cilantro Lime Chicken Burger", "prices": [369], "image_url": "" },
+            { "name": "Gochujang Burger", "prices": [369], "image_url": "" }
+          ]
+        },
+        {
+          "name": "Sandwiches",
+          "items": [
+            { "name": "Egg & Cheese Sandwich", "prices": [300], "image_url": "" },
+            { "name": "Chicken & Cheese Sandwich", "prices": [349], "image_url": "" },
+            { "name": "Crispy Chicken Sandwich", "prices": [349], "image_url": "" },
+            { "name": "Chicken Tikka Sandwich", "prices": [340], "image_url": "" },
+            { "name": "Caprese Sandwich", "prices": [340], "image_url": "" },
+            { "name": "Paneer Tikka Sandwich", "prices": [340], "image_url": "" },
+            { "name": "Pickled Paneer Sandwich", "prices": [340], "image_url": "" },
+            { "name": "Grandma's Grilled Vegetable Sandwich", "prices": [340], "image_url": "" }
+          ]
+        }
+      ]
+    }
+  ]
+}
